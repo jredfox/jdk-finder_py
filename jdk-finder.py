@@ -1,0 +1,211 @@
+import os
+import sys
+import time
+import glob
+try:
+    import ConfigParser as configparser  # Python 2
+except ImportError:
+    import configparser  # Python 3
+
+###################
+###################
+# TODO:
+# - replace all glob calls with quicker options
+# - look for solution when primary target isn't found but we prefer jdk-8
+#
+# FLAGS:
+# * -a Accept ALL JDKs within that match the target or all if target is "*"
+# * -p PATH only search
+# * -f <true/false> PATH first
+# * -r deep recursion instead instead of looking at specified installation locations
+# * -h Home & Local User installs like ~/.jdks
+# * -m Mac Paths only. When on macOS Only Search Standard macOS JDK Installation Paths
+# * -n Non Extensive search (only applies to non windows but will only check the PATH and standard installations)
+# * -e extact version string match
+# * -q quickly fetch it from the cache without verification other then checking if java & javac exist
+# * -u update the cache a-sync after -q has ran
+# * -t target may be single string, range, or an array of strings / ranges Examples: "8", "8-6", "6-8", "11-11, 17-19, 21-25+", "<6, 17+" where this matches <5 and also 17 or higher
+# * -v <jre, jdk, any> accepted jdk installation types
+# * -x <true/false> Resolve symlink of javac executeable itself
+###################
+
+VERSION = "2.0.0"
+isMac = sys.platform.lower() == 'darwin'
+
+#flag options
+f_target = '' #TODO:fix
+f_recurse = False
+f_resolve_javac = True
+
+str_bin = 'Contents/Home/bin' if isMac else 'bin'
+visited = set()
+javas = []
+exes = ("java", "javac")
+
+#Uses a simpler way to find JDKs using recursion.
+def find_jdks_recurse():
+    findjavas('/usr/lib/jvm')
+    findjavas('/usr/java')
+    for p in glob.glob('/usr/lib*'):
+        findjavas(p)
+    findjavas('/etc/alternatives')
+    findjavas('/opt')
+    findjavas('/usr/local')
+    global javas
+    global visited
+    visited = set() #clear RAM
+    for jdk in javas:
+        chk_jdk('found jdk:', jdk)
+    javas = [] #clear RAM
+
+def findjavas(path):
+    for root, dirs, files in os.walk(path, followlinks=True):
+        # Detect loop or repeated symlink target
+        real = os.path.realpath(root)
+        if real in visited:
+            dirs[:] = []  # Don't recurse further
+            continue
+        visited.add(real)
+
+        if any(t in files for t in exes):
+            javas.append(real)
+
+keys = [
+    'jvm',
+    'jdk',
+    'java', 
+    'jre',
+    'adoptium',
+    'termium',
+    'graal',
+    'corretto',
+    'zulu',
+    'zing',
+    'semeru',
+    'alibaba',
+    'dragonwell',
+    'bellsoft',
+    'openlogic'
+]
+def chk_keys(name):
+    name = name.lower()
+    return (any(k in name for k in keys)), (name.startswith('j'))
+def chk_jdk(msg, dir_path):
+    print(msg + dir_path)
+
+def load_cfg():
+    #Make Config Dir
+    cdir = os.path.join(os.path.dirname(os.path.realpath(__file__)), 'cache')
+    if not os.path.isdir(cdir):
+        os.makedirs(cdir)
+    #Generate Config Data
+    cfgpath = os.path.join(cdir, 'jdkfinder.cfg')
+    config = configparser.ConfigParser()
+    config.add_section('main')
+    config.set('main', 'target', '')
+    config.set('main', 'r', 'false')
+    config.set('main', 'q', 'false')
+    config.set('main', 'u', 'false')
+    config.set('main', 'p', 'false')
+    config.set('main', 'f', 'false')
+    config.set('main', 'h', 'false')
+    config.set('main', 'm', 'false')
+    config.set('main', 'n', 'false')
+    config.set('main', 'e', 'false')
+    config.set('main', 'a', 'false')
+    config.set('main', 'v', 'false')
+    config.set('main', 'x', 'true')
+    #Define Global Vars getting edited
+    global f_target
+    global f_recurse
+    global f_resolve_javac
+    #Parse Config and Values into memory
+    config.read(cfgpath)
+    f_target = config.get('main', 'target')
+    f_recurse = config.get('main', 'r').lower().startswith('t')
+    f_resolve_javac = config.get('main', 'x').lower().startswith('t')
+    #Save Config
+    with open(cfgpath, 'w') as configfile:
+        config.write(configfile)
+
+if __name__ == "__main__":
+    #load the default config
+    load_cfg()
+
+    if f_recurse:
+        find_jdks_recurse()
+        sys.exit(1)
+
+    #Start Standard JDK Installation Scan
+    #Handle /usr/lib/jvm/*/bin
+    jvms_dir = '/usr/lib/jvm'
+    if os.path.isdir(jvms_dir):
+        for sub in os.listdir(jvms_dir):
+            dir_jvm = os.path.join(jvms_dir, sub, str_bin)
+            if(os.path.isdir(dir_jvm)):
+                chk_jdk('found jdk____:', dir_jvm)
+
+    #Handle /usr/java/*/bin (Code Duplication is 2x faster then method callings)
+    jvms_dir = '/usr/java'
+    if os.path.isdir(jvms_dir):
+        for sub in os.listdir(jvms_dir):
+            dir_jvm = os.path.join(jvms_dir, sub, str_bin)
+            if(os.path.isdir(dir_jvm)):
+                chk_jdk('found jdk____:', dir_jvm)
+
+    #Handle /usr/lib*/<keyword>/bin & /usr/lib*/<keyword>/*/bin but skipping /usr/lib/jvm/*/bin
+    sub_usr = os.listdir('/usr')
+    for sub in sub_usr:
+        if sub.lower().startswith('lib'):
+            lib = os.path.join('/usr', sub)
+            if os.path.isdir(lib):
+                for dir_a in os.listdir(lib):
+                    hasKey, hasJ = chk_keys(dir_a)
+                    if hasKey or hasJ:
+                        str_dir_can = os.path.join(lib, dir_a)
+                        if str_dir_can == '/usr/lib/jvm':
+                            continue
+                        if os.path.isdir(str_dir_can):
+                            str_dir_bin = os.path.join(str_dir_can, str_bin)
+                            if os.path.isdir(str_dir_bin):
+                                chk_jdk('found bin:', str_dir_bin)
+                            if hasKey:
+                                for dir_b in os.listdir(str_dir_can):
+                                    str_dir_jdk = os.path.join(str_dir_can, dir_b, str_bin)
+                                    if os.path.isdir(str_dir_jdk):
+                                        chk_jdk('found jdk:', str_dir_jdk)
+    
+    #Handle /usr/lib/jvm/bin & /usr/java/bin for older javas
+    old_jvm =  os.path.join('/usr/lib/jvm', str_bin)
+    old_java = os.path.join('/usr/java', str_bin)
+    if os.path.isdir(old_jvm):
+        chk_jdk('old jvm:', old_jvm)
+    if os.path.isdir(old_java):
+        chk_jdk('old jvm:', old_java)
+
+    #Handle root/<keyword> & root/<keyword>/bin & root/<keyword>/*/bin
+    roots = [
+        '/etc/alternatives',
+        '/opt',
+        '/usr/local'
+    ]
+    for r in roots:
+        if os.path.isdir(r):
+            if f_resolve_javac:
+                chk_jdk('root check:', r)
+            for sub in os.listdir(r):
+                hasKey, hasJ = chk_keys(sub)
+                if hasKey or hasJ:
+                    k = os.path.join(r, sub)
+                    if os.path.isdir(k):
+                        k_bin = os.path.join(k, str_bin)
+                        if os.path.isdir(k_bin):
+                            chk_jdk('keyword_bin detected:', k_bin)
+                        if hasKey:
+                            for s in os.listdir(k):
+                                k_jdk = os.path.join(k, s, str_bin)
+                                if os.path.isdir(k_jdk):
+                                    chk_jdk('sub dir:', k_jdk)
+    
+    #Exit with error of 1 if not found
+    sys.exit(1)
