@@ -131,14 +131,15 @@ def load_cfg():
     config.set('main', 'q', 'false')
     config.set('main', 'u', 'false')
     config.set('main', 'p', 'false')
-    config.set('main', 'f', 'false')
+    config.set('main', 'f', 'true')
     config.set('main', 'h', 'false')
     config.set('main', 'm', 'false')
     config.set('main', 'n', 'false')
     config.set('main', 'e', 'false')
     config.set('main', 'a', 'false')
-    config.set('main', 'v', 'false')
+    config.set('main', 'v', 'JDK')
     config.set('main', 'x', 'true')
+    config.set('main', 'nopath', 'false')
     #Define Global Vars getting edited
     global f_target
     global f_recurse
@@ -167,7 +168,7 @@ def load_cfg():
     f_non_extensive = config.get('main', 'n')[:1].lower() == 't'
     f_exact = config.get('main', 'e')[:1].lower() == 't'
     f_all = config.get('main', 'a')[:1].lower() == 't'
-    f_value_type = config.get('main', 'v')[:1].lower() == 't'
+    f_value_type = config.get('main', 'v')
     f_resolve_javac = config.get('main', 'x')[:1].lower() == 't'
     f_no_path = config.get('main', 'no_path')[:1].lower() == 't'
     #Save Config
