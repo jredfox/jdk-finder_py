@@ -17,7 +17,6 @@ except ImportError:
 # * -a Accept ALL JDKs within that match the target or all if target is "*"
 # * -p PATH only search
 # * -f <true/false> PATH first
-# * -r deep recursion instead instead of looking at specified installation locations
 # * -h Home & Local User installs like ~/.jdks
 # * -m Mac Paths only. When on macOS Only Search Standard macOS JDK Installation Paths
 # * -n Non Extensive search (only applies to non windows but will only check the PATH and standard installations)
@@ -27,14 +26,27 @@ except ImportError:
 # * -t target may be single string, range, or an array of strings / ranges Examples: "8", "8-6", "6-8", "11-11, 17-19, 21-25+", "<6, 17+" where this matches <5 and also 17 or higher
 # * -v <jre, jdk, any> accepted jdk installation types
 # * -x <true/false> Resolve symlink of javac executeable itself
+# 
+# Flags Done:
+# * -r deep recursion instead instead of looking at specified installation locations
 ###################
 
 VERSION = "2.0.0"
 isMac = sys.platform.lower() == 'darwin'
 
-#flag options
-f_target = '' #TODO:fix
+#Flag Options
+f_target = ''
 f_recurse = False
+f_quick = False
+f_update = False
+f_paths = False
+f_paths_first = False
+f_home = False
+f_mac_paths = False
+f_non_extensive = False
+f_exact = False
+f_all = False
+f_vals = False
 f_resolve_javac = True
 
 str_bin = 'Contents/Home/bin' if isMac else 'bin'
@@ -118,12 +130,32 @@ def load_cfg():
     #Define Global Vars getting edited
     global f_target
     global f_recurse
+    global f_quick
+    global f_update
+    global f_paths
+    global f_paths_first
+    global f_home
+    global f_mac_paths
+    global f_non_extensive
+    global f_exact
+    global f_all
+    global f_vals
     global f_resolve_javac
     #Parse Config and Values into memory
     config.read(cfgpath)
     f_target = config.get('main', 'target')
-    f_recurse = config.get('main', 'r').lower().startswith('t')
-    f_resolve_javac = config.get('main', 'x').lower().startswith('t')
+    f_recurse = config.get('main', 'r')[:1].lower() == 't'
+    f_quick = config.get('main', 'q')[:1].lower() == 't'
+    f_update = config.get('main', 'u')[:1].lower() == 't'
+    f_paths = config.get('main', 'p')[:1].lower() == 't'
+    f_paths_first = config.get('main', 'f')[:1].lower() == 't'
+    f_home = config.get('main', 'h')[:1].lower() == 't'
+    f_mac_paths = config.get('main', 'm')[:1].lower() == 't'
+    f_non_extensive = config.get('main', 'n')[:1].lower() == 't'
+    f_exact = config.get('main', 'e')[:1].lower() == 't'
+    f_all = config.get('main', 'a')[:1].lower() == 't'
+    f_vals = config.get('main', 'v')[:1].lower() == 't'
+    f_resolve_javac = config.get('main', 'x')[:1].lower() == 't'
     #Save Config
     with open(cfgpath, 'w') as configfile:
         config.write(configfile)
