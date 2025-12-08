@@ -2,6 +2,7 @@ import os
 import sys
 import time
 import glob
+import argparse
 try:
     import ConfigParser as configparser  # Python 2
 except ImportError:
@@ -236,11 +237,12 @@ def find_jdks():
                                 if os.path.isdir(k_jdk):
                                     chk_jdk('sub dir:', k_jdk)
 
-#Loads the program's command line arguments into memory  
+#Loads the program's command line arguments into memory 
+#Returns True if the command line has arguments
 def loadcmd():
     #Optimization for when command line args were not entered
     if len(sys.argv) < 2:
-        return
+        return False
     #Define Global Vars getting edited
     global f_target
     global f_recurse
@@ -281,6 +283,7 @@ def loadcmd():
         globals()['f_' + name] = value
     if f_target == '@NULL':
         f_target = args.target_path
+    return True #TODO: make it return False if no args were parsed besides the target, make it return false when -c flag is here????
 
 if __name__ == "__main__":
     #load the default config
