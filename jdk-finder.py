@@ -10,8 +10,17 @@ except ImportError:
 
 ###################
 ###################
+# TODONOW:
+# - fix broken variable names
+# - fix loadcmd always returning true unless no arguments were present
+# - look into overriding optional params if they do -f=true/false
+# - make macOS work
+# - make windows work
+#
 # TODO:
 # - look for solution when primary target isn't found but we prefer jdk-8
+# - Add Small JDK Install search for Windows Official Oracle & Adoptium only!
+# - Re-Implement jdk-finder.py V1 checks into the program so it actually works
 #
 # FLAGS:
 # * -a Accept ALL JDKs within that match the target or all if target is "*"
