@@ -301,7 +301,7 @@ if __name__ == "__main__":
     if not loadcmd():
         load_cfg()
 
-    #Main Method call depending upon recurse flag
+    #Main Method Program call depending upon recurse flag
     if f_recurse:
         find_jdks_recurse()
     else:
