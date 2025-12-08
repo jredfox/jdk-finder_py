@@ -12,6 +12,7 @@ except ImportError:
 ###################
 # TODONOW:
 # - prevent config from overwriting values already found in argv
+# - test target with the -c flag
 # - prevent config from writing to disk when changes in generation were not detected
 # - make macOS work
 # - make windows work
@@ -241,7 +242,7 @@ def load_cfg():
         config.write(configfile)
 
 #Loads the program's command line arguments into memory 
-#Returns True if the command line has arguments
+#Returns True if flags were set from the command line and the config should not load
 def loadcmd():
     #Optimization for when command line args were not entered
     if len(sys.argv) < 2:
@@ -251,7 +252,7 @@ def loadcmd():
     #Parse Command Line Args
     parser = argparse.ArgumentParser(add_help=False)
     parser.add_argument('-t','--target', metavar='"1.8."', default='', help='Target')
-    parser.add_argument('target_path', nargs='?', default='', metavar='"1.8."', help='Target as a Positional Paramater')
+    parser.add_argument('target_path', nargs='?', default='@NULL', metavar='"1.8."', help='Target as a Positional Paramater')
     parser.add_argument('-r','--recurse', action='store_true', help='Deep Recursion')
     parser.add_argument('-q','--quick', action='store_true', help='Quickly fetches the JDK path from the cache with minimal checks')
     parser.add_argument('-u','--update', action='store_true', help='Update Used with -q in order to update the cache a-sync if -q succeeds')
@@ -272,10 +273,9 @@ def loadcmd():
     for name, value in vars(args).items():
         globals()['f_' + name] = value
         flags.append(name)
-    if f_target.strip() == '':
+    if f_target.strip() == '' and (not args.target_path == '@NULL'):
         f_target = args.target_path
-        if not f_target == '':
-            flags.append('target')
+        flags.append('target')
     return (not f_config_load)
 
 if __name__ == "__main__":
