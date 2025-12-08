@@ -12,7 +12,6 @@ except ImportError:
 ###################
 # TODONOW:
 # - prevent config from overwriting values already found in argv
-# - look into overriding optional params if they do -f=true/false
 # - make macOS work
 # - make windows work
 #
@@ -302,9 +301,9 @@ if __name__ == "__main__":
     if not loadcmd():
         load_cfg()
 
+    #Main Method call depending upon recurse flag
     if f_recurse:
         find_jdks_recurse()
-        sys.exit(1)
     else:
         find_jdks()
 
