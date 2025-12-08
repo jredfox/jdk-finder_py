@@ -58,8 +58,9 @@ exes = ("java", "javac")
 def find_jdks_recurse():
     findjavas('/usr/lib/jvm')
     findjavas('/usr/java')
-    for p in glob.glob('/usr/lib*'):
-        findjavas(p)
+    for p in os.listdir('/usr'):
+        if p.lower().startswith('lib'):
+            findjavas(os.path.join('/usr', p))
     findjavas('/etc/alternatives')
     findjavas('/opt')
     findjavas('/usr/local')
