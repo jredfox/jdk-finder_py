@@ -58,6 +58,7 @@ f_value_type = 'JDK'
 f_resolve_javac = True
 f_config_load = False
 f_no_path = False
+cmd_args = False
 
 str_bin = 'Contents/Home/bin' if isMac else 'bin'
 visited = set()
@@ -191,6 +192,7 @@ def find_jdks():
 
 #Load the Config File
 def load_cfg():
+    print('loading config')
     #Make Config Dir
     cdir = os.path.join(os.path.dirname(os.path.realpath(__file__)), 'cache')
     if not os.path.isdir(cdir):
@@ -214,20 +216,7 @@ def load_cfg():
     config.set('main', 'x', 'true')
     config.set('main', 'no_path', 'false')
     #Define Global Vars getting edited
-    global f_target
-    global f_recurse
-    global f_quick
-    global f_update
-    global f_path
-    global f_path_first
-    global f_home
-    global f_mac_path
-    global f_non_extensive
-    global f_exact
-    global f_all
-    global f_value_type
-    global f_resolve_javac
-    global f_no_path
+    global f_target, f_recurse, f_quick, f_update, f_path, f_path_first, f_home, f_mac_path, f_non_extensive, f_exact, f_all, f_value_type, f_resolve_javac, f_no_path
     #Parse Config and Values into memory
     config.read(cfgpath)
     f_target = config.get('main', 'target')
@@ -255,21 +244,10 @@ def loadcmd():
     if len(sys.argv) < 2:
         return False
     #Define Global Vars getting edited
-    global f_target
-    global f_recurse
-    global f_quick
-    global f_update
-    global f_path
-    global f_path_first
-    global f_home
-    global f_mac_path
-    global f_non_extensive
-    global f_exact
-    global f_all
-    global f_value_type
-    global f_resolve_javac
-    global f_config_load
+    global f_target, f_recurse, f_quick, f_update, f_path, f_path_first, f_home, f_mac_path, f_non_extensive, f_exact, f_all, f_value_type, f_resolve_javac, f_config_load
+    global cmd_args
     #Parse Command Line Args
+    cmd_args = True
     parser = argparse.ArgumentParser(add_help=False)
     parser.add_argument('-t','--target', metavar='"1.8."', default='', help='Target')
     parser.add_argument('target_path', nargs='?', default='', metavar='"1.8."', help='Target as a Positional Paramater')
@@ -292,8 +270,10 @@ def loadcmd():
     args = parser.parse_args()
     for name, value in vars(args).items():
         globals()['f_' + name] = value
+        #flags.append(name)
     if f_target.strip() == '':
         f_target = args.target_path
+        #flags.append('target')
     return (not f_config_load)
 
 if __name__ == "__main__":
