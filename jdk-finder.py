@@ -160,14 +160,8 @@ def load_cfg():
     with open(cfgpath, 'w') as configfile:
         config.write(configfile)
 
-if __name__ == "__main__":
-    #load the default config
-    load_cfg()
-
-    if f_recurse:
-        find_jdks_recurse()
-        sys.exit(1)
-
+#Check Linx & macOS for unix like paths
+def find_jdks():
     #Start Standard JDK Installation Scan
     #Handle /usr/lib/jvm/*/bin
     jvms_dir = '/usr/lib/jvm'
@@ -239,5 +233,16 @@ if __name__ == "__main__":
                                 if os.path.isdir(k_jdk):
                                     chk_jdk('sub dir:', k_jdk)
     
+
+if __name__ == "__main__":
+    #load the default config
+    load_cfg()
+
+    if f_recurse:
+        find_jdks_recurse()
+        sys.exit(1)
+    else:
+        find_jdks()
+
     #Exit with error of 1 if not found
     sys.exit(1)
