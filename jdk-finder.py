@@ -10,7 +10,6 @@ except ImportError:
 ###################
 ###################
 # TODO:
-# - replace all glob calls with quicker options
 # - look for solution when primary target isn't found but we prefer jdk-8
 #
 # FLAGS:
@@ -26,6 +25,7 @@ except ImportError:
 # * -t target may be single string, range, or an array of strings / ranges Examples: "8", "8-6", "6-8", "11-11, 17-19, 21-25+", "<6, 17+" where this matches <5 and also 17 or higher
 # * -v <jre, jdk, any> accepted jdk installation types
 # * -x <true/false> Resolve symlink of javac executeable itself
+# * -c load the config flag values exlcuding target even if flags were entered through the command line
 # 
 # Flags Done:
 # * -r deep recursion instead instead of looking at specified installation locations
@@ -39,15 +39,17 @@ f_target = ''
 f_recurse = False
 f_quick = False
 f_update = False
-f_paths = False
-f_paths_first = False
+f_path = False
+f_path_first = True
 f_home = False
-f_mac_paths = False
+f_mac_path = False
 f_non_extensive = False
 f_exact = False
 f_all = False
-f_vals = False
+f_value_type = 'JDK'
 f_resolve_javac = True
+f_config_load = False
+f_no_path = False
 
 str_bin = 'Contents/Home/bin' if isMac else 'bin'
 visited = set()
@@ -233,11 +235,57 @@ def find_jdks():
                                 k_jdk = os.path.join(k, s, str_bin)
                                 if os.path.isdir(k_jdk):
                                     chk_jdk('sub dir:', k_jdk)
-    
+
+#Loads the program's command line arguments into memory  
+def loadcmd():
+    #Optimization for when command line args were not entered
+    if len(sys.argv) < 2:
+        return
+    #Define Global Vars getting edited
+    global f_target
+    global f_recurse
+    global f_quick
+    global f_update
+    global f_path
+    global f_path_first
+    global f_home
+    global f_mac_path
+    global f_non_extensive
+    global f_exact
+    global f_all
+    global f_value_type
+    global f_resolve_javac
+    global f_config_load
+    #Parse Command Line Args
+    parser = argparse.ArgumentParser(add_help=False)
+    parser.add_argument('-t','--target', metavar='"1.8."', default='@NULL', help='Target')
+    parser.add_argument('target_path', nargs='?', default='', metavar='"1.8."', help='Target as a Positional Paramater')
+    parser.add_argument('-r','--recurse', action='store_true', help='Deep Recursion')
+    parser.add_argument('-q','--quick', action='store_true', help='Quickly fetches the JDK path from the cache with minimal checks')
+    parser.add_argument('-u','--update', action='store_true', help='Update Used with -q in order to update the cache a-sync if -q succeeds')
+    parser.add_argument('-p','--path', action='store_true', help='PATH search only!')
+    parser.add_argument('-f','--path_first', default=True, metavar='TRUE|FALSE', help='<true/false> Search PATH first before looking in known JDK Installs!')
+    parser.add_argument('-h','--home', action='store_true', help='Search for home & local JDK Installs by the user!')
+    parser.add_argument('-m','--mac_path', action='store_true', help='Search for official macOS JDK Installs!')
+    parser.add_argument('-n','--non_extensive', action='store_true', help='Search for Standard JDK Installs on the linux paths!')
+    parser.add_argument('-e','--exact', action='store_true', help='JDK Version String Must Match Exactly this argument!')
+    parser.add_argument('-a','--all', action='store_true', help='Search for all Applicable JDK Installs not just the first one found!')
+    parser.add_argument('-v','--value_type', default='JDK', metavar='JDK|JRE|ANY', help='JDK Value Install Types')
+    parser.add_argument('-x','--resolve_javac', default=True, metavar='TRUE|FALSE', help='Resolve Symbolic Links(Symlinks) of the javac executeable!')
+    parser.add_argument('-c','--config_load', action='store_true', help='Config Overrides CLI flags that have not been populated yet! Normally the config only loads without any Command line(CLI) flags.')
+    parser.add_argument('--no_path', action='store_true', help="Don't Search the PATH only known JDK Installs!")
+    parser.add_argument('--help', action='help', help='Show this help message and exit')
+
+    args = parser.parse_args()
+    for name, value in vars(args).items():
+        globals()['f_' + name] = value
+    if f_target == '@NULL':
+        f_target = args.target_path
 
 if __name__ == "__main__":
     #load the default config
-    load_cfg()
+    if not loadcmd():
+        load_cfg()
 
     if f_recurse:
         find_jdks_recurse()
