@@ -117,64 +117,6 @@ def chk_keys(name):
 def chk_jdk(msg, dir_path):
     print(msg + dir_path)
 
-def load_cfg():
-    #Make Config Dir
-    cdir = os.path.join(os.path.dirname(os.path.realpath(__file__)), 'cache')
-    if not os.path.isdir(cdir):
-        os.makedirs(cdir)
-    #Generate Config Data
-    cfgpath = os.path.join(cdir, 'jdkfinder.cfg')
-    config = configparser.ConfigParser()
-    config.add_section('main')
-    config.set('main', 'target', '')
-    config.set('main', 'r', 'false')
-    config.set('main', 'q', 'false')
-    config.set('main', 'u', 'false')
-    config.set('main', 'p', 'false')
-    config.set('main', 'f', 'true')
-    config.set('main', 'h', 'false')
-    config.set('main', 'm', 'false')
-    config.set('main', 'n', 'false')
-    config.set('main', 'e', 'false')
-    config.set('main', 'a', 'false')
-    config.set('main', 'v', 'JDK')
-    config.set('main', 'x', 'true')
-    config.set('main', 'no_path', 'false')
-    #Define Global Vars getting edited
-    global f_target
-    global f_recurse
-    global f_quick
-    global f_update
-    global f_path
-    global f_path_first
-    global f_home
-    global f_mac_path
-    global f_non_extensive
-    global f_exact
-    global f_all
-    global f_value_type
-    global f_resolve_javac
-    global f_no_path
-    #Parse Config and Values into memory
-    config.read(cfgpath)
-    f_target = config.get('main', 'target')
-    f_recurse = config.get('main', 'r')[:1].lower() == 't'
-    f_quick = config.get('main', 'q')[:1].lower() == 't'
-    f_update = config.get('main', 'u')[:1].lower() == 't'
-    f_path = config.get('main', 'p')[:1].lower() == 't'
-    f_path_first = config.get('main', 'f')[:1].lower() == 't'
-    f_home = config.get('main', 'h')[:1].lower() == 't'
-    f_mac_path = config.get('main', 'm')[:1].lower() == 't'
-    f_non_extensive = config.get('main', 'n')[:1].lower() == 't'
-    f_exact = config.get('main', 'e')[:1].lower() == 't'
-    f_all = config.get('main', 'a')[:1].lower() == 't'
-    f_value_type = config.get('main', 'v')
-    f_resolve_javac = config.get('main', 'x')[:1].lower() == 't'
-    f_no_path = config.get('main', 'no_path')[:1].lower() == 't'
-    #Save Config
-    with open(cfgpath, 'w') as configfile:
-        config.write(configfile)
-
 #Check Linx & macOS for unix like paths
 def find_jdks():
     #Start Standard JDK Installation Scan
@@ -247,6 +189,65 @@ def find_jdks():
                                 k_jdk = os.path.join(k, s, str_bin)
                                 if os.path.isdir(k_jdk):
                                     chk_jdk('sub dir:', k_jdk)
+
+#Load the Config File
+def load_cfg():
+    #Make Config Dir
+    cdir = os.path.join(os.path.dirname(os.path.realpath(__file__)), 'cache')
+    if not os.path.isdir(cdir):
+        os.makedirs(cdir)
+    #Generate Config Data
+    cfgpath = os.path.join(cdir, 'jdkfinder.cfg')
+    config = configparser.ConfigParser()
+    config.add_section('main')
+    config.set('main', 'target', '')
+    config.set('main', 'r', 'false')
+    config.set('main', 'q', 'false')
+    config.set('main', 'u', 'false')
+    config.set('main', 'p', 'false')
+    config.set('main', 'f', 'true')
+    config.set('main', 'h', 'false')
+    config.set('main', 'm', 'false')
+    config.set('main', 'n', 'false')
+    config.set('main', 'e', 'false')
+    config.set('main', 'a', 'false')
+    config.set('main', 'v', 'JDK')
+    config.set('main', 'x', 'true')
+    config.set('main', 'no_path', 'false')
+    #Define Global Vars getting edited
+    global f_target
+    global f_recurse
+    global f_quick
+    global f_update
+    global f_path
+    global f_path_first
+    global f_home
+    global f_mac_path
+    global f_non_extensive
+    global f_exact
+    global f_all
+    global f_value_type
+    global f_resolve_javac
+    global f_no_path
+    #Parse Config and Values into memory
+    config.read(cfgpath)
+    f_target = config.get('main', 'target')
+    f_recurse = config.get('main', 'r')[:1].lower() == 't'
+    f_quick = config.get('main', 'q')[:1].lower() == 't'
+    f_update = config.get('main', 'u')[:1].lower() == 't'
+    f_path = config.get('main', 'p')[:1].lower() == 't'
+    f_path_first = config.get('main', 'f')[:1].lower() == 't'
+    f_home = config.get('main', 'h')[:1].lower() == 't'
+    f_mac_path = config.get('main', 'm')[:1].lower() == 't'
+    f_non_extensive = config.get('main', 'n')[:1].lower() == 't'
+    f_exact = config.get('main', 'e')[:1].lower() == 't'
+    f_all = config.get('main', 'a')[:1].lower() == 't'
+    f_value_type = config.get('main', 'v')
+    f_resolve_javac = config.get('main', 'x')[:1].lower() == 't'
+    f_no_path = config.get('main', 'no_path')[:1].lower() == 't'
+    #Save Config
+    with open(cfgpath, 'w') as configfile:
+        config.write(configfile)
 
 #Loads the program's command line arguments into memory 
 #Returns True if the command line has arguments
