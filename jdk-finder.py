@@ -12,6 +12,7 @@ except ImportError:
 ###################
 # TODONOW:
 # - prevent config from overwriting values already found in argv
+# - prevent config from writing to disk when changes in generation were not detected
 # - make macOS work
 # - make windows work
 #
@@ -75,8 +76,7 @@ def find_jdks_recurse():
     findjavas('/etc/alternatives')
     findjavas('/opt')
     findjavas('/usr/local')
-    global javas
-    global visited
+    global javas, visited
     visited = set() #clear RAM
     for jdk in javas:
         chk_jdk('found jdk:', jdk)
