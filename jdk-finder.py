@@ -59,7 +59,7 @@ f_value_type = 'JDK'
 f_resolve_javac = True
 f_config_load = False
 f_no_path = False
-cmd_args = False
+flags = []
 
 str_bin = 'Contents/Home/bin' if isMac else 'bin'
 visited = set()
@@ -219,20 +219,23 @@ def load_cfg():
     global f_target, f_recurse, f_quick, f_update, f_path, f_path_first, f_home, f_mac_path, f_non_extensive, f_exact, f_all, f_value_type, f_resolve_javac, f_no_path
     #Parse Config and Values into memory
     config.read(cfgpath)
-    f_target = config.get('main', 'target')
-    f_recurse = config.get('main', 'r')[:1].lower() == 't'
-    f_quick = config.get('main', 'q')[:1].lower() == 't'
-    f_update = config.get('main', 'u')[:1].lower() == 't'
-    f_path = config.get('main', 'p')[:1].lower() == 't'
-    f_path_first = config.get('main', 'f')[:1].lower() == 't'
-    f_home = config.get('main', 'h')[:1].lower() == 't'
-    f_mac_path = config.get('main', 'm')[:1].lower() == 't'
-    f_non_extensive = config.get('main', 'n')[:1].lower() == 't'
-    f_exact = config.get('main', 'e')[:1].lower() == 't'
-    f_all = config.get('main', 'a')[:1].lower() == 't'
-    f_value_type = config.get('main', 'v')
-    f_resolve_javac = config.get('main', 'x')[:1].lower() == 't'
-    f_no_path = config.get('main', 'no_path')[:1].lower() == 't'
+    if not flags:
+        f_target = config.get('main', 'target').strip()
+        f_recurse = config.get('main', 'r')[:1].lower() == 't'
+        f_quick = config.get('main', 'q')[:1].lower() == 't'
+        f_update = config.get('main', 'u')[:1].lower() == 't'
+        f_path = config.get('main', 'p')[:1].lower() == 't'
+        f_path_first = config.get('main', 'f')[:1].lower() == 't'
+        f_home = config.get('main', 'h')[:1].lower() == 't'
+        f_mac_path = config.get('main', 'm')[:1].lower() == 't'
+        f_non_extensive = config.get('main', 'n')[:1].lower() == 't'
+        f_exact = config.get('main', 'e')[:1].lower() == 't'
+        f_all = config.get('main', 'a')[:1].lower() == 't'
+        f_value_type = config.get('main', 'v')
+        f_resolve_javac = config.get('main', 'x')[:1].lower() == 't'
+        f_no_path = config.get('main', 'no_path')[:1].lower() == 't'
+    else:
+        print('loading config overrides TODO:')
     #Save Config
     with open(cfgpath, 'w') as configfile:
         config.write(configfile)
@@ -245,9 +248,7 @@ def loadcmd():
         return False
     #Define Global Vars getting edited
     global f_target, f_recurse, f_quick, f_update, f_path, f_path_first, f_home, f_mac_path, f_non_extensive, f_exact, f_all, f_value_type, f_resolve_javac, f_config_load
-    global cmd_args
     #Parse Command Line Args
-    cmd_args = True
     parser = argparse.ArgumentParser(add_help=False)
     parser.add_argument('-t','--target', metavar='"1.8."', default='', help='Target')
     parser.add_argument('target_path', nargs='?', default='', metavar='"1.8."', help='Target as a Positional Paramater')
@@ -270,10 +271,11 @@ def loadcmd():
     args = parser.parse_args()
     for name, value in vars(args).items():
         globals()['f_' + name] = value
-        #flags.append(name)
+        flags.append(name)
     if f_target.strip() == '':
         f_target = args.target_path
-        #flags.append('target')
+        if not f_target == '':
+            flags.append('target')
     return (not f_config_load)
 
 if __name__ == "__main__":
