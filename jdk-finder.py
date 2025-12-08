@@ -271,7 +271,7 @@ def loadcmd():
     global f_config_load
     #Parse Command Line Args
     parser = argparse.ArgumentParser(add_help=False)
-    parser.add_argument('-t','--target', metavar='"1.8."', default='@NULL', help='Target')
+    parser.add_argument('-t','--target', metavar='"1.8."', default='', help='Target')
     parser.add_argument('target_path', nargs='?', default='', metavar='"1.8."', help='Target as a Positional Paramater')
     parser.add_argument('-r','--recurse', action='store_true', help='Deep Recursion')
     parser.add_argument('-q','--quick', action='store_true', help='Quickly fetches the JDK path from the cache with minimal checks')
@@ -292,7 +292,7 @@ def loadcmd():
     args = parser.parse_args()
     for name, value in vars(args).items():
         globals()['f_' + name] = value
-    if f_target == '@NULL':
+    if f_target.strip() == '':
         f_target = args.target_path
     return (not f_config_load)
 
