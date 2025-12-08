@@ -11,7 +11,6 @@ except ImportError:
 ###################
 ###################
 # TODONOW:
-# - fix broken variable names
 # - fix loadcmd always returning true unless no arguments were present
 # - look into overriding optional params if they do -f=true/false
 # - make macOS work
@@ -145,30 +144,32 @@ def load_cfg():
     global f_recurse
     global f_quick
     global f_update
-    global f_paths
-    global f_paths_first
+    global f_path
+    global f_path_first
     global f_home
-    global f_mac_paths
+    global f_mac_path
     global f_non_extensive
     global f_exact
     global f_all
-    global f_vals
+    global f_value_type
     global f_resolve_javac
+    global f_no_path
     #Parse Config and Values into memory
     config.read(cfgpath)
     f_target = config.get('main', 'target')
     f_recurse = config.get('main', 'r')[:1].lower() == 't'
     f_quick = config.get('main', 'q')[:1].lower() == 't'
     f_update = config.get('main', 'u')[:1].lower() == 't'
-    f_paths = config.get('main', 'p')[:1].lower() == 't'
-    f_paths_first = config.get('main', 'f')[:1].lower() == 't'
+    f_path = config.get('main', 'p')[:1].lower() == 't'
+    f_path_first = config.get('main', 'f')[:1].lower() == 't'
     f_home = config.get('main', 'h')[:1].lower() == 't'
-    f_mac_paths = config.get('main', 'm')[:1].lower() == 't'
+    f_mac_path = config.get('main', 'm')[:1].lower() == 't'
     f_non_extensive = config.get('main', 'n')[:1].lower() == 't'
     f_exact = config.get('main', 'e')[:1].lower() == 't'
     f_all = config.get('main', 'a')[:1].lower() == 't'
-    f_vals = config.get('main', 'v')[:1].lower() == 't'
+    f_value_type = config.get('main', 'v')[:1].lower() == 't'
     f_resolve_javac = config.get('main', 'x')[:1].lower() == 't'
+    f_no_path = config.get('main', 'no_path')[:1].lower() == 't'
     #Save Config
     with open(cfgpath, 'w') as configfile:
         config.write(configfile)
