@@ -266,7 +266,7 @@ def loadcmd():
     parser.add_argument('-q','--quick', action='store_true', help='Quickly fetches the JDK path from the cache with minimal checks')
     parser.add_argument('-u','--update', action='store_true', help='Update Used with -q in order to update the cache a-sync if -q succeeds')
     parser.add_argument('-p','--path', action='store_true', help='PATH search only!')
-    parser.add_argument('-f','--path_first', default=True, metavar='TRUE|FALSE', help='<true/false> Search PATH first before looking in known JDK Installs!')
+    parser.add_argument('-f','--path_first', default=True, metavar='TRUE|FALSE', help='Search PATH first before looking in known JDK Installs!')
     parser.add_argument('-h','--home', action='store_true', help='Search for home & local JDK Installs by the user!')
     parser.add_argument('-m','--mac_path', action='store_true', help='Search for official macOS JDK Installs!')
     parser.add_argument('-n','--non_extensive', action='store_true', help='Search for Standard JDK Installs on the linux paths!')
