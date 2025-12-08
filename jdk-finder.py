@@ -11,7 +11,7 @@ except ImportError:
 ###################
 ###################
 # TODONOW:
-# - fix loadcmd always returning true unless no arguments were present
+# - prevent config from overwriting values already found in argv
 # - look into overriding optional params if they do -f=true/false
 # - make macOS work
 # - make windows work
@@ -139,7 +139,7 @@ def load_cfg():
     config.set('main', 'a', 'false')
     config.set('main', 'v', 'JDK')
     config.set('main', 'x', 'true')
-    config.set('main', 'nopath', 'false')
+    config.set('main', 'no_path', 'false')
     #Define Global Vars getting edited
     global f_target
     global f_recurse
@@ -294,7 +294,7 @@ def loadcmd():
         globals()['f_' + name] = value
     if f_target == '@NULL':
         f_target = args.target_path
-    return True #TODO: make it return False if no args were parsed besides the target, make it return false when -c flag is here????
+    return (not f_config_load)
 
 if __name__ == "__main__":
     #load the default config
