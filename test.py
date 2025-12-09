@@ -53,7 +53,7 @@ def loadcmd():
     parser.add_argument('-x','--resolve_javac', default=SENTINEL, metavar='TRUE|FALSE', help='Resolve Symbolic Links(Symlinks) of the javac executeable!')
     parser.add_argument('-c','--config_load', action='store_true', default=SENTINEL, help='Config Overrides CLI flags that have not been populated yet! Normally the config only loads without any Command line(CLI) flags.')
     parser.add_argument('--no_path', action='store_true', default=SENTINEL, help="Don't Search the PATH only known JDK Installs!")
-    parser.add_argument('--help', action='help', default=SENTINEL, help='Show this help message and exit')
+    parser.add_argument('--help', action='help', help='Show this help message and exit')
 
     args = parser.parse_args()
     for name, value in vars(args).items():
