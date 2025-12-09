@@ -13,11 +13,12 @@ import subprocess
 ###################
 ###################
 # TODONOW:
+# - overhaul command arguments
 # - make macOS work
 # - make windows work
 #
 # TODO:
-# - look for solution when primary target isn't found but we prefer jdk-8
+# - When JDK < Target Range Max and either -u or no arguments are specified it will update the cache a-sync with a search
 # - Add Small JDK Install search for Windows Official Oracle & Adoptium only!
 # - Re-Implement jdk-finder.py V1 checks into the program so it actually works
 #
