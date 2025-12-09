@@ -37,14 +37,35 @@ def loadcmd():
     #Parse Command Line Args
     SENTINEL = object()
     parser = argparse.ArgumentParser(add_help=False)
-    parser.add_argument('-p','--path', action='store_true', default=SENTINEL, help='Search PATH first before looking in known JDK Installs!')
+    parser.add_argument('-t','--target', metavar='"1.8."', default=SENTINEL, help='Target. Examples: "8-6", "6-8", "1.7.|1.8.|17|<9&+5 TODO: SW EW REGEX"')
+    parser.add_argument('target_path', nargs='?', default=SENTINEL, metavar='"1.8."', help='Target as a Positional Paramater')
+    parser.add_argument('-r','--recurse', action='store_true', default=SENTINEL, help='Deep Recursion')
+    parser.add_argument('-q','--quick', action='store_true', default=SENTINEL, help='Quickly fetches the JDK path from the cache with minimal checks')
+    parser.add_argument('-u','--update', action='store_true', default=SENTINEL, help='Update JDK cache A-SYNC if the cache succeeds')
+    parser.add_argument('-a','--all', action='store_true', default=SENTINEL, help='Search for all Applicable JDK Installs not just the first one found!')
+    parser.add_argument('-s','--search', metavar='\'PATH|INSTALLS|HOME\'', default=SENTINEL, help="Search Opperations and Order! Example -s 'PATH|INSTALLS|HOME' Example 2: -s '*' Says to search all types and use the normal search order")
+    parser.add_argument('-b','--application_bundle', default=SENTINEL, metavar='JDK|JRE|ANY|*', help='JDK Value Install Types')
+    parser.add_argument('-i','--intensity', metavar='\'NORMAL|MIN|MAC\'', default=SENTINEL, help='Search Intensity where Min does minimal non extensive searches. Normal is the default and Mac is for Searching on Mac Standard Install Paths only')
+    parser.add_argument('-x','--resolver', default=SENTINEL, metavar='\'SYMLINK|COMMAND|NONE\'', help="Resolve the actual path of the javac executeable! Examples: -x 'SYMLINK|COMMAND', -x '*'")
+    parser.add_argument('-c','--config_load', action='store_true', default=SENTINEL, help='Configuration Values Are Used If the CLI Has not overriden them!')
+    parser.add_argument('--help', action='help', help='Show this help message and exit')
 
     args = parser.parse_args()
     for name, value in vars(args).items():
         if not value == SENTINEL:
             globals()['f_' + name] = value
-            print(name + '=' + str(value))
             flags.append(name)
+
+    #Correct Target & Flags
+    if 'target_path' in flags:
+        flags.remove('target_path')
+    if args.target == SENTINEL:
+        if not args.target_path == SENTINEL:
+            f_target = args.target_path
+            flags.append('target')
+    f_path_first = str(f_path_first).lower().startswith('t')
+    f_value_type = str(f_value_type)
+    f_resolve_javac = str(f_resolve_javac).lower().startswith('t')
 
     return (not f_config_load)
 
