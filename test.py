@@ -41,7 +41,8 @@ def loadcmd():
     parser.add_argument('target_path', nargs='?', default=SENTINEL, metavar='"1.8."', help='Target as a Positional Paramater')
     parser.add_argument('-r','--recurse', action='store_true', default=SENTINEL, help='Deep Recursion')
     parser.add_argument('-q','--quick', action='store_true', default=SENTINEL, help='Quickly fetches the Java Path from the Cache with minimal checks')
-    parser.add_argument('-u','--update', action='store_true', default=SENTINEL, help='Update Java Cache A-SYNC if the check of the Cache succeeds')
+    parser.add_argument('-u','--update', action='store_true', default=SENTINEL, help='Update Java Cache A-SYNC if the cache check succeds and the version < max')
+    parser.add_argument('--clean_cache', action='store_true', default=SENTINEL, help='Cleans the Java Cache which forces a live synchronous Java search!')
     parser.add_argument('-a','--all', action='store_true', default=SENTINEL, help='Search for all Applicable Java Installs not just the first one found!')
     parser.add_argument('-s','--search', metavar='\'PATH|INSTALLS|HOME\'', default=SENTINEL, help="Search Opperations and Order! Example -s 'PATH|INSTALLS|HOME' Example 2: -s '*' Says to search all types and use the normal search order")
     parser.add_argument('-b','--application_bundle', default=SENTINEL, metavar='JDK|JRE|ANY|*', help='Java Value Install Types')
@@ -59,10 +60,9 @@ def loadcmd():
     #Correct Target & Flags
     if 'target_path' in flags:
         flags.remove('target_path')
-    if args.target == SENTINEL:
-        if not args.target_path == SENTINEL:
-            f_target = args.target_path
-            flags.append('target')
+    if args.target == SENTINEL and (not args.target_path == SENTINEL):
+        f_target = args.target_path
+        flags.append('target')
     f_path_first = str(f_path_first).lower().startswith('t')
     f_value_type = str(f_value_type)
     f_resolve_javac = str(f_resolve_javac).lower().startswith('t')
