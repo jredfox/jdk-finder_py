@@ -14,17 +14,16 @@ f_recurse = False
 f_quick = False
 f_update = False
 f_path = False
-f_path_first = False
+f_path_first = True
 f_home = False
 f_mac_path = False
 f_non_extensive = False
 f_exact = False
 f_all = False
-f_value_type = ''
-f_resolve_javac = False
+f_value_type = 'JDK'
+f_resolve_javac = True
 f_config_load = False
 f_no_path = False
-
 flags = []
 
 #Loads the program's command line arguments into memory 
@@ -64,6 +63,7 @@ def loadcmd():
             flags.append(name)
 
     #Correct Flags Either from being SENTINEL or not being boolean
+    flags.remove('target_path')
     if f_target == SENTINEL:
         if not args.target_path == SENTINEL:
             f_target = args.target_path
