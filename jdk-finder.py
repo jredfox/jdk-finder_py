@@ -7,6 +7,8 @@ try:
     import ConfigParser as configparser  # Python 2
 except ImportError:
     import configparser  # Python 3
+import re
+import subprocess
 
 ###################
 ###################
@@ -42,7 +44,14 @@ except ImportError:
 ###################
 
 VERSION = "2.0.0"
+isWindows = os.name == 'nt'
 isMac = sys.platform.lower() == 'darwin'
+isLinux = not isMac and not isWindows
+exe = '.exe' if isWindows else ''
+VOLUME_WIN_REGEX = re.compile(
+    r'(\\\\|\\)[\?\.]{1,2}\\Volume\{[0-9a-f\-]+\}\\Windows(?:\\|$)',
+    re.IGNORECASE
+)
 
 #Flag Options
 f_target = ''
@@ -69,14 +78,19 @@ exes = ("java", "javac")
 
 #Uses a simpler way to find JDKs using recursion.
 def find_jdks_recurse():
-    findjavas('/usr/lib/jvm')
-    findjavas('/usr/java')
-    for p in os.listdir('/usr'):
-        if p.lower().startswith('lib'):
-            findjavas(os.path.join('/usr', p))
-    findjavas('/etc/alternatives')
-    findjavas('/opt')
-    findjavas('/usr/local')
+    if isWindows:
+        print('TODO:')#//TODO:
+    if isMac:
+        print('TODO:')#//TODO:
+    else:
+        findjavas('/usr/lib/jvm')
+        findjavas('/usr/java')
+        for p in os.listdir('/usr'):
+            if p.lower().startswith('lib'):
+                findjavas(os.path.join('/usr', p))
+        findjavas('/etc/alternatives')
+        findjavas('/opt')
+        findjavas('/usr/local')
     global javas, visited
     visited = set() #clear RAM
     for jdk in javas:
