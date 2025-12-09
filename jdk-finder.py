@@ -12,6 +12,7 @@ except ImportError:
 ###################
 # TODONOW:
 # - prevent config from overwriting values already found in argv
+# - field saftey check after loading config and command line
 # - prevent config from writing to disk when changes in generation were not detected
 # - make macOS work
 # - make windows work
@@ -37,10 +38,10 @@ except ImportError:
 # * -t target may be single string, range, or an array of strings / ranges Examples: "8", "8-6", "6-8", "11-11, 17-19, 21-25+", "<6, 17+" where this matches <5 and also 17 or higher
 # * -v <jre, jdk, any> accepted jdk installation types
 # * -x <true/false> Resolve symlink of javac executeable itself
-# * -c load the config flag values exlcuding target even if flags were entered through the command line
 # 
 # Flags Done:
 # * -r deep recursion instead instead of looking at specified installation locations
+# * -c load the config flag values exlcuding target even if flags were entered through the command line
 ###################
 
 VERSION = "2.0.0"
@@ -195,7 +196,6 @@ def find_jdks():
 
 #Load the Config File
 def load_cfg():
-    print('loading config')
     #Make Config Dir
     cdir = os.path.join(os.path.dirname(os.path.realpath(__file__)), 'cache')
     if not os.path.isdir(cdir):
@@ -216,14 +216,10 @@ def load_cfg():
     config.read(cfgpath)
     for f in sflags:
         if not f in flags:
-            f_flag = 'f_' + f
-            print('overriding option:' + f_flag)
-            globals()[f_flag] = config.get('main', f).strip()
+            globals()['f_' + f] = config.get('main', f).strip()
     for f in bflags:
         if not f in flags:
-            f_flag = 'f_' + f
-            print('overriding option:' + f_flag)
-            globals()[f_flag] = config.get('main', f)[:1].lower() == 't'
+            globals()['f_' + f] = config.get('main', f)[:1].lower() == 't'
 
     #Save Config
     with open(cfgpath, 'w') as configfile:
