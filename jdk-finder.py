@@ -11,7 +11,6 @@ except ImportError:
 ###################
 ###################
 # TODONOW:
-# - prevent config from overwriting values already found in argv
 # - field saftey check after loading config and command line
 # - prevent config from writing to disk when changes in generation were not detected
 # - make macOS work
