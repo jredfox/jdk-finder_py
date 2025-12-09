@@ -61,19 +61,17 @@ def loadcmd():
             globals()['f_' + name] = value
             flags.append(name)
 
-    #Correct Flags Either from being SENTINEL or not being boolean
+    #Correct Target & Flags
     if 'target_path' in flags:
         flags.remove('target_path')
-    if f_target == SENTINEL:
+    if args.target == SENTINEL:
         if not args.target_path == SENTINEL:
             f_target = args.target_path
-            flags.append('target') 
-        else:
-            f_target = ''
-    f_path_first = False if f_path_first == SENTINEL else str(f_path_first).lower().startswith('t')
-    if f_value_type == SENTINEL:
-        f_value_type = 'JDK'
-    f_resolve_javac = False if f_resolve_javac == SENTINEL else str(f_resolve_javac).lower().startswith('t')
+            flags.append('target')
+    f_path_first = str(f_path_first).lower().startswith('t')
+    f_value_type = str(f_value_type)
+    f_resolve_javac = str(f_resolve_javac).lower().startswith('t')
+
     return (not f_config_load)
 
 loadcmd()
