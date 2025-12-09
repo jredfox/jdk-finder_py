@@ -11,7 +11,6 @@ except ImportError:
 ###################
 ###################
 # TODONOW:
-# - prevent config from writing to disk when changes in generation were not detected
 # - make macOS work
 # - make windows work
 #
@@ -275,11 +274,6 @@ if __name__ == "__main__":
     #load the default config
     if not loadcmd():
         load_cfg()
-
-    for k, v in globals().items():
-        if k.startswith('f_'):
-            print(str(k) + ' "' + str(v) + '"')
-    sys.exit(0)
 
     #Main Method Program call depending upon recurse flag
     if f_recurse:
