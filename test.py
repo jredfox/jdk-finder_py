@@ -77,7 +77,7 @@ def loadcmd():
 loadcmd()
 
 for f in flags:
-    print(f)
+    print(f + ' value:' + str(globals()["f_" + f]))
 
 sys.exit(0)
 for k, v in globals().items():
