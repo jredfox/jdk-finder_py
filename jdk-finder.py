@@ -216,12 +216,14 @@ def load_cfg():
         if not f in flags:
             f_flag = 'f_' + f
             print('overriding option:' + f_flag)
-            globals()[f_flag] = config.get('main', f_flag).strip()
+            globals()[f_flag] = config.get('main', f).strip()
     for f in bflags:
+        config.set('main', f, str(f == 'path_first' or f == 'resolve_javac').lower())
         if not f in flags:
             f_flag = 'f_' + f
         print('overriding option:' + f_flag)
-    globals()[f_flag] = config.get('main', f_flag)[:1].lower() == 't'
+        globals()[f_flag] = config.get('main', f)[:1].lower() == 't'
+
     #Save Config
     with open(cfgpath, 'w') as configfile:
         config.write(configfile)
@@ -252,7 +254,7 @@ def loadcmd():
     parser.add_argument('-v','--value_type', default=SENTINEL, metavar='JDK|JRE|ANY', help='JDK Value Install Types')
     parser.add_argument('-x','--resolve_javac', default=SENTINEL, metavar='TRUE|FALSE', help='Resolve Symbolic Links(Symlinks) of the javac executeable!')
     parser.add_argument('-c','--config_load', action='store_true', default=SENTINEL, help='Config Overrides CLI flags that have not been populated yet! Normally the config only loads without any Command line(CLI) flags.')
-    parser.add_argument('-i', '--no_path', action='store_true', default=SENTINEL, help="Seaches for JDK Installs without checking the PATH")
+    parser.add_argument('-i', '--no_path', action='store_true', default=SENTINEL, help="Seaches JDK Installs with no PATH!")
     parser.add_argument('--help', action='help', help='Show this help message and exit')
 
     args = parser.parse_args()
@@ -279,6 +281,7 @@ if __name__ == "__main__":
     if not loadcmd():
         load_cfg()
 
+    print('values')
     for f in flags:
         print(f + ' value:"' + str(globals()["f_" + f]) + '"')
     sys.exit(0)
