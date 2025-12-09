@@ -204,25 +204,26 @@ def load_cfg():
     cfgpath = os.path.join(cdir, 'jdkfinder.cfg')
     config = configparser.ConfigParser()
     config.add_section('main')
+    sflags = ['target', 'value_type']
+    bflags = ['recurse', 'quick', 'update', 'path', 'path_first', 'home', 'mac_path', 'non_extensive', 'exact', 'all', 'resolve_javac', 'no_path']
+    for f in sflags:
+        config.set('main', f, str(globals()['f_' + f]))
+    for f in bflags:
+        config.set('main', f, str(f == 'path_first' or f == 'resolve_javac').lower())
     #Define Global Vars getting edited
     global f_target, f_recurse, f_quick, f_update, f_path, f_path_first, f_home, f_mac_path, f_non_extensive, f_exact, f_all, f_value_type, f_resolve_javac, f_no_path
     #Parse Config and Values into memory
     config.read(cfgpath)
-    print('loading config overrides')
-    sflags = ['target', 'value_type']
-    bflags = ['recurse', 'quick', 'update', 'path', 'path_first', 'home', 'mac_path', 'non_extensive', 'exact', 'all', 'resolve_javac', 'no_path']
     for f in sflags:
-        config.set('main', f, str(f == 'path_first' or f == 'resolve_javac').lower())
         if not f in flags:
             f_flag = 'f_' + f
             print('overriding option:' + f_flag)
             globals()[f_flag] = config.get('main', f).strip()
     for f in bflags:
-        config.set('main', f, str(f == 'path_first' or f == 'resolve_javac').lower())
         if not f in flags:
             f_flag = 'f_' + f
-        print('overriding option:' + f_flag)
-        globals()[f_flag] = config.get('main', f)[:1].lower() == 't'
+            print('overriding option:' + f_flag)
+            globals()[f_flag] = config.get('main', f)[:1].lower() == 't'
 
     #Save Config
     with open(cfgpath, 'w') as configfile:
@@ -281,9 +282,9 @@ if __name__ == "__main__":
     if not loadcmd():
         load_cfg()
 
-    print('values')
-    for f in flags:
-        print(f + ' value:"' + str(globals()["f_" + f]) + '"')
+    for k, v in globals().items():
+        if k.startswith('f_'):
+            print(str(k) + ' "' + str(v) + '"')
     sys.exit(0)
 
     #Main Method Program call depending upon recurse flag
