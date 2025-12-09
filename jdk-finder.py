@@ -12,7 +12,6 @@ except ImportError:
 ###################
 # TODONOW:
 # - prevent config from overwriting values already found in argv
-# - test target with the -c flag
 # - prevent config from writing to disk when changes in generation were not detected
 # - make macOS work
 # - make windows work
@@ -21,6 +20,9 @@ except ImportError:
 # - look for solution when primary target isn't found but we prefer jdk-8
 # - Add Small JDK Install search for Windows Official Oracle & Adoptium only!
 # - Re-Implement jdk-finder.py V1 checks into the program so it actually works
+#
+# NOTES:
+# -If you plan to run this program multiple times for one process please reset all the global variables back to their defaults first
 #
 # FLAGS:
 # * -a Accept ALL JDKs within that match the target or all if target is "*"
@@ -220,7 +222,7 @@ def load_cfg():
     global f_target, f_recurse, f_quick, f_update, f_path, f_path_first, f_home, f_mac_path, f_non_extensive, f_exact, f_all, f_value_type, f_resolve_javac, f_no_path
     #Parse Config and Values into memory
     config.read(cfgpath)
-    if not flags:
+    if not f_config_load:
         f_target = config.get('main', 'target').strip()
         f_recurse = config.get('main', 'r')[:1].lower() == 't'
         f_quick = config.get('main', 'q')[:1].lower() == 't'
@@ -232,11 +234,23 @@ def load_cfg():
         f_non_extensive = config.get('main', 'n')[:1].lower() == 't'
         f_exact = config.get('main', 'e')[:1].lower() == 't'
         f_all = config.get('main', 'a')[:1].lower() == 't'
-        f_value_type = config.get('main', 'v')
+        f_value_type = config.get('main', 'v').strip()
         f_resolve_javac = config.get('main', 'x')[:1].lower() == 't'
         f_no_path = config.get('main', 'no_path')[:1].lower() == 't'
     else:
-        print('loading config overrides TODO:')
+        print('loading config overrides')
+        sflags = ['target', 'value_type']
+        bflags = ['recurse', 'quick', 'update', 'path', 'path_first', 'home', 'mac_path', 'non_extensive', 'exact', 'all', 'resolve_javac', 'no_path']
+        for f in sflags:
+            if not f in flags:
+                f_flag = 'f_' + f
+                print('overriding cfg option:' + f_flag)
+                globals()[f_flag] = config.get('main', f_flag).strip()
+        for f in bflags:
+            if not f in flags:
+                f_flag = 'f_' + f
+                print('overriding cfg option:' + f_flag)
+                globals()[f_flag] = config.get('main', f_flag)[:1].lower() == 't'
     #Save Config
     with open(cfgpath, 'w') as configfile:
         config.write(configfile)
@@ -267,7 +281,7 @@ def loadcmd():
     parser.add_argument('-v','--value_type', default=SENTINEL, metavar='JDK|JRE|ANY', help='JDK Value Install Types')
     parser.add_argument('-x','--resolve_javac', default=SENTINEL, metavar='TRUE|FALSE', help='Resolve Symbolic Links(Symlinks) of the javac executeable!')
     parser.add_argument('-c','--config_load', action='store_true', default=SENTINEL, help='Config Overrides CLI flags that have not been populated yet! Normally the config only loads without any Command line(CLI) flags.')
-    parser.add_argument('--no_path', action='store_true', default=SENTINEL, help="Don't Search the PATH only known JDK Installs!")
+    parser.add_argument('-i', '--no_path', action='store_true', default=SENTINEL, help="Seaches for JDK Installs without checking the PATH")
     parser.add_argument('--help', action='help', help='Show this help message and exit')
 
     args = parser.parse_args()
