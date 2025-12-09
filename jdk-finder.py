@@ -204,53 +204,24 @@ def load_cfg():
     cfgpath = os.path.join(cdir, 'jdkfinder.cfg')
     config = configparser.ConfigParser()
     config.add_section('main')
-    config.set('main', 'target', '')
-    config.set('main', 'r', 'false')
-    config.set('main', 'q', 'false')
-    config.set('main', 'u', 'false')
-    config.set('main', 'p', 'false')
-    config.set('main', 'f', 'true')
-    config.set('main', 'h', 'false')
-    config.set('main', 'm', 'false')
-    config.set('main', 'n', 'false')
-    config.set('main', 'e', 'false')
-    config.set('main', 'a', 'false')
-    config.set('main', 'v', 'JDK')
-    config.set('main', 'x', 'true')
-    config.set('main', 'no_path', 'false')
     #Define Global Vars getting edited
     global f_target, f_recurse, f_quick, f_update, f_path, f_path_first, f_home, f_mac_path, f_non_extensive, f_exact, f_all, f_value_type, f_resolve_javac, f_no_path
     #Parse Config and Values into memory
     config.read(cfgpath)
-    if not f_config_load:
-        f_target = config.get('main', 'target').strip()
-        f_recurse = config.get('main', 'r')[:1].lower() == 't'
-        f_quick = config.get('main', 'q')[:1].lower() == 't'
-        f_update = config.get('main', 'u')[:1].lower() == 't'
-        f_path = config.get('main', 'p')[:1].lower() == 't'
-        f_path_first = config.get('main', 'f')[:1].lower() == 't'
-        f_home = config.get('main', 'h')[:1].lower() == 't'
-        f_mac_path = config.get('main', 'm')[:1].lower() == 't'
-        f_non_extensive = config.get('main', 'n')[:1].lower() == 't'
-        f_exact = config.get('main', 'e')[:1].lower() == 't'
-        f_all = config.get('main', 'a')[:1].lower() == 't'
-        f_value_type = config.get('main', 'v').strip()
-        f_resolve_javac = config.get('main', 'x')[:1].lower() == 't'
-        f_no_path = config.get('main', 'no_path')[:1].lower() == 't'
-    else:
-        print('loading config overrides')
-        sflags = ['target', 'value_type']
-        bflags = ['recurse', 'quick', 'update', 'path', 'path_first', 'home', 'mac_path', 'non_extensive', 'exact', 'all', 'resolve_javac', 'no_path']
-        for f in sflags:
-            if not f in flags:
-                f_flag = 'f_' + f
-                print('overriding cfg option:' + f_flag)
-                globals()[f_flag] = config.get('main', f_flag).strip()
-        for f in bflags:
-            if not f in flags:
-                f_flag = 'f_' + f
-                print('overriding cfg option:' + f_flag)
-                globals()[f_flag] = config.get('main', f_flag)[:1].lower() == 't'
+    print('loading config overrides')
+    sflags = ['target', 'value_type']
+    bflags = ['recurse', 'quick', 'update', 'path', 'path_first', 'home', 'mac_path', 'non_extensive', 'exact', 'all', 'resolve_javac', 'no_path']
+    for f in sflags:
+        config.set('main', f, str(f == 'path_first' or f == 'resolve_javac').lower())
+        if not f in flags:
+            f_flag = 'f_' + f
+            print('overriding option:' + f_flag)
+            globals()[f_flag] = config.get('main', f_flag).strip()
+    for f in bflags:
+        if not f in flags:
+            f_flag = 'f_' + f
+        print('overriding option:' + f_flag)
+    globals()[f_flag] = config.get('main', f_flag)[:1].lower() == 't'
     #Save Config
     with open(cfgpath, 'w') as configfile:
         config.write(configfile)
@@ -307,6 +278,10 @@ if __name__ == "__main__":
     #load the default config
     if not loadcmd():
         load_cfg()
+
+    for f in flags:
+        print(f + ' value:"' + str(globals()["f_" + f]) + '"')
+    sys.exit(0)
 
     #Main Method Program call depending upon recurse flag
     if f_recurse:
