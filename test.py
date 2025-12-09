@@ -63,7 +63,8 @@ def loadcmd():
             flags.append(name)
 
     #Correct Flags Either from being SENTINEL or not being boolean
-    flags.remove('target_path')
+    if 'target_path' in flags:
+        flags.remove('target_path')
     if f_target == SENTINEL:
         if not args.target_path == SENTINEL:
             f_target = args.target_path
