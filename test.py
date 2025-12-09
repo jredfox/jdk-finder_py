@@ -33,7 +33,7 @@ def loadcmd():
     if len(sys.argv) < 2:
         return False
     #Define Global Vars getting edited
-    global f_target, f_recurse, f_quick, f_update, f_path, f_path_first, f_home, f_mac_path, f_non_extensive, f_exact, f_all, f_value_type, f_resolve_javac, f_config_load
+    global f_target, f_recurse, f_quick, f_update, f_path, f_path_first, f_home, f_mac_path, f_non_extensive, f_exact, f_all, f_value_type, f_resolve_javac, f_config_load, f_no_path
     #Parse Command Line Args
     SENTINEL = object()
     parser = argparse.ArgumentParser(add_help=False)
