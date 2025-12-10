@@ -13,7 +13,6 @@ import subprocess
 ###################
 ###################
 # TODONOW:
-# - overhaul config
 # - valid / parse method for after cli and cfg load so they are not repeatedly dynmaically grabbed
 # - make macOS work
 # - make windows work
@@ -262,10 +261,49 @@ def loadcmd():
 
     return (not config_load)
 
+def parse():
+    """
+    #Flag Options
+    target = ''
+    search = ''
+    intensity = ''
+    application_bundle = ''
+    resolver = ''
+    paths = ''
+    """
+    #Define globals to edit
+    global target, search, intensity, application_bundle, resolver
+    #Sanity Checks
+    if not target.strip():
+        target = '8-6'
+    if not search.strip():
+        search = 'PATH|INSTALLS|HOME|CUSTOM'
+    if not intensity.strip():
+        intensity = 'NORMAL'
+    if not application_bundle.strip():
+        application_bundle = 'JDK'
+    if not resolver.strip():
+        resolver = '*'
+
+    target = target.upper()
+    search = search.upper()
+    intensity = intensity.upper()
+    application_bundle = application_bundle.upper()
+    resolver = resolver.upper()
+
+    print('t ' + target)
+    print('s ' + search)
+    print('i ' + intensity)
+    print('b ' + application_bundle)
+    print('x ' + resolver)
+    print('p ' + paths)
+    sys.exit(0)
+
 if __name__ == "__main__":
     #load the default config
     if not loadcmd():
         load_cfg()
+    parse()
 
     #Main Method Program call depending upon recurse flag
     if recurse:
