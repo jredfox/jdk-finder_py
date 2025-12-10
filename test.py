@@ -29,7 +29,7 @@ bundle_JDK = True
 bundle_JRE = False
 rsymlinks = True
 rcmd = False
-custom_paths = set()
+custom_paths = []
 
 #Loads the program's command line arguments into memory 
 #Returns True if flags were set from the command line and the config should not load
@@ -77,13 +77,13 @@ def parse():
     global target, search, intensity, application_bundle, resolver, tasks, bundle_JDK, bundle_JRE, rsymlinks, rcmd, custom_paths
 
     #Sanity Checks
-    target = target.strip().upper()
+    target = target.strip()
     search = search.replace(' ', '').upper()
     intensity = intensity.replace(' ', '').upper()
     application_bundle = application_bundle.replace(' ', '').upper()
     resolver = resolver.strip().replace(' ', '').upper()
     if not target:
-        target = '8-6'
+        target = '1.8.' #TODO: change to 8-6 when range support is allowed
     if not search:
         search = 'PATH|INSTALLS|HOME|CUSTOM'
     if not intensity:
@@ -96,14 +96,14 @@ def parse():
     #TODO: target parse into ranges and lists with search regex & patterns in the future instead of one static target
     
     #Parse the tasks into an ordered static list
-    tasks = search.replace(',', '|').replace(' ', '').split('|')
+    tasks = search.replace(',', '|').split('|')
 
     #Parse Application Bundle into cached booleans bundle_JDK & bundle_JRE
     anny = '*' in application_bundle or 'ANY' in application_bundle
     bundle_JDK = anny or 'JDK' in application_bundle
     bundle_JRE = anny or 'JRE' in application_bundle or 'JAVA' in application_bundle
     if not bundle_JDK and not bundle_JRE:
-        sys.stderr.write("Fatle Error Java Application Bundle String is Invalid or Missing For '" + application_bundle + "'\n")
+        sys.stderr.write("Fatal Error Java Application Bundle String is Invalid or Missing For '" + application_bundle + "'\n")
         sys.exit(-1)
 
     #Parse Resolver into cached useable boolean resolve_symlinks & resolve_cmd

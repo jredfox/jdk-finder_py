@@ -18,6 +18,7 @@ import subprocess
 # - make windows work
 #
 # TODO:
+# - p make sure to replace /bin with the actual bin string
 # - When JDK < Target and -u or 0 args update cache A-SYNC (-u get enabled by default inside the config when generating)
 # - Add Small JDK Install search for Windows Official Oracle & Adoptium only!
 # - Re-Implement jdk-finder.py V1 checks into the program so it actually works
