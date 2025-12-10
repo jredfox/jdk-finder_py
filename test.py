@@ -9,21 +9,20 @@ except ImportError:
     import configparser  # Python 3
 
 #Flag Options
-f_target = ''
-f_recurse = False
-f_quick = False
-f_update = False
-f_path = False
-f_path_first = True
-f_home = False
-f_mac_path = False
-f_non_extensive = False
-f_exact = False
+target = ''
+recurse = False
+quick = False
+update = False
+clean_cache = False
 f_all = False
-f_value_type = 'JDK'
-f_resolve_javac = True
-f_config_load = False
-f_no_path = False
+search = ''
+intensity = ''
+paths = ''
+application_bundle = ''
+resolver = ''
+config = False
+home = False
+
 flags = []
 
 #Loads the program's command line arguments into memory 
@@ -33,7 +32,7 @@ def loadcmd():
     if len(sys.argv) < 2:
         return False
     #Define Global Vars getting edited
-    global f_target, f_recurse, f_quick, f_update, f_path, f_path_first, f_home, f_mac_path, f_non_extensive, f_exact, f_all, f_value_type, f_resolve_javac, f_config_load, f_no_path
+    global target, recurse, quick, update, clean_cache, f_all, search, intensity, paths, application_bundle, resolver, config
     #Parse Command Line Args
     SENTINEL = object()
     parser = argparse.ArgumentParser(add_help=False)
@@ -55,15 +54,18 @@ def loadcmd():
     args = parser.parse_args()
     for name, value in vars(args).items():
         if not value == SENTINEL:
-            globals()['f_' + name] = value
+            globals()[name] = value
             flags.append(name)
+            print(name)
+    sys.exit(0)
 
     #Correct Target & Flags
     if 'target_path' in flags:
         flags.remove('target_path')
     if args.target == SENTINEL and (not args.target_path == SENTINEL):
-        f_target = args.target_path
+        target = args.target_path
         flags.append('target')
+
     f_path_first = str(f_path_first).lower().startswith('t')
     f_value_type = str(f_value_type)
     f_resolve_javac = str(f_resolve_javac).lower().startswith('t')
