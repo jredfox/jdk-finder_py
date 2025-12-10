@@ -45,7 +45,7 @@ def loadcmd():
     parser.add_argument('-k','--clean_cache', action='store_true', default=SENTINEL, help='Cleans the Java Cache which forces a live synchronous Java search!')
     parser.add_argument('-a','--all', action='store_true', default=SENTINEL, help='Search for all Applicable Java Installs not just the first one found!')
     parser.add_argument('-s','--search', metavar='\'PATH|INSTALLS|HOME\'', default=SENTINEL, help="Search Opperations and Order! Example -s 'PATH|INSTALLS|HOME' Example 2: -s '*' Says to search all types and use the normal search order")
-    parser.add_argument('-b','--application_bundle', default=SENTINEL, metavar='JDK|JRE|ANY|*', help='Java Value Install Types')
+    parser.add_argument('-b','--application_bundle', default=SENTINEL, metavar='JDK|JRE|ANY|*', help='Java Application Bundle Types')
     parser.add_argument('-i','--intensity', metavar='NORMAL|MIN|OS', default=SENTINEL, help='Search Intensity where Min does minimal non extensive searches based on the search opperations and OS. OS Searches Standard Official Java Installation Paths only')
     parser.add_argument('-x','--resolver', default=SENTINEL, metavar='\'SYMLINK|COMMAND|NONE\'', help="Resolve the actual path of the javac executeable! Examples: -x 'SYMLINK|COMMAND', -x '*'")
     parser.add_argument('-c','--config', action='store_true', default=SENTINEL, help='Configuration Values Are Used If the CLI Has not overriden them!')
