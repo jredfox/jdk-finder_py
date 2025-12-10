@@ -21,7 +21,6 @@ paths = ''
 application_bundle = ''
 resolver = ''
 config_load = False
-home = False
 
 flags = []
 
@@ -56,7 +55,6 @@ def loadcmd():
         if not value == SENTINEL:
             globals()[name] = value
             flags.append(name)
-            print(name)
 
     #Correct Target & Flags
     if 'target_path' in flags:
@@ -69,7 +67,8 @@ def loadcmd():
 
 loadcmd()
 
-sys.exit(0)
+"""
 for k, v in globals().items():
     if not k.startswith('__') and (not '<' in k) and (not '<' in str(v)):
         print(str(k) + ' "' + str(v) + '"')
+"""
