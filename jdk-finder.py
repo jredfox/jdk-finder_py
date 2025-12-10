@@ -200,22 +200,22 @@ def load_cfg():
     cfgpath = os.path.join(cdir, 'jdkfinder.cfg')
     config = configparser.ConfigParser()
     config.add_section('main')
-    sflags = ['target', 'value_type']
-    bflags = ['recurse', 'quick', 'update', 'path', 'path_first', 'home', 'mac_path', 'non_extensive', 'exact', 'all', 'resolve_javac', 'no_path']
+    sflags = ['target', 'search', 'intensity', 'paths', 'application_bundle', 'resolver']
+    bflags = ['recurse', 'quick', 'update', 'clean_cache', 'srch_all']
     for f in sflags:
-        config.set('main', f, str(globals()['f_' + f]))
+        config.set('main', f, str(globals()[f]))
     for f in bflags:
-        config.set('main', f, str(f == 'path_first' or f == 'resolve_javac').lower())
+        config.set('main', f, str(globals()[f]))
     #Define Global Vars getting edited
-    global f_target, f_recurse, f_quick, f_update, f_path, f_path_first, f_home, f_mac_path, f_non_extensive, f_exact, f_all, f_value_type, f_resolve_javac, f_no_path
+    global target, recurse, quick, update, clean_cache, srch_all, search, intensity, paths, application_bundle, resolver
     #Parse Config and Values into memory
     config.read(cfgpath)
     for f in sflags:
         if not f in flags:
-            globals()['f_' + f] = config.get('main', f).strip()
+            globals()[f] = config.get('main', f).strip()
     for f in bflags:
         if not f in flags:
-            globals()['f_' + f] = config.get('main', f)[:1].lower() == 't'
+            globals()[f] = config.get('main', f)[:1].lower() == 't'
 
     #Save Config
     with open(cfgpath, 'w') as configfile:
