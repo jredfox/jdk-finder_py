@@ -41,7 +41,7 @@ VOLUME_WIN_REGEX = re.compile(
     re.IGNORECASE
 )
 
-#Flag Options
+#Flags
 target = ''
 recurse = False
 quick = False
@@ -55,6 +55,14 @@ application_bundle = ''
 resolver = ''
 config_load = False
 flags = []
+
+#Processed data from CLI and / or Config
+tasks = []
+bundle_JDK = True
+bundle_JRE = False
+rsymlinks = True
+rcmd = False
+custom_paths = []
 
 str_bin = 'Contents/Home/bin' if isMac else 'bin'
 visited = set()
