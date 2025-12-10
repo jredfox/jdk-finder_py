@@ -13,7 +13,7 @@ import subprocess
 ###################
 ###################
 # TODONOW:
-# - valid / parse method for after cli and cfg load so they are not repeatedly dynmaically grabbed
+# - re-check config and parse method
 # - make macOS work
 # - make windows work
 #
@@ -182,7 +182,7 @@ def find_jdks():
     ]
     for r in roots:
         if os.path.isdir(r):
-            if resolve:
+            if resolver:
                 chk_jdk('root check:', r)
             for sub in os.listdir(r):
                 hasKey, hasJ = chk_keys(sub)
@@ -308,6 +308,8 @@ def parse():
     anny = '*' in resolver or 'ANY' in resolver
     rsymlinks = anny or 'SYMLINK' in resolver or 'SYMBOLICLINK' in resolver
     rcmd = anny or 'CMD' in resolver or 'COMMAND' in resolver
+    if not rsymlinks and not rcmd:
+        resolver = ''
 
     #Parse Custom Paths
     if paths:
