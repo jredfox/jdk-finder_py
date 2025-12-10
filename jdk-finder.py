@@ -62,6 +62,7 @@ bundle_JDK = True
 bundle_JRE = False
 rsymlinks = True
 rcmd = False
+has_resolver = True
 custom_paths = []
 
 str_bin = 'Contents/Home/bin' if isMac else 'bin'
@@ -182,7 +183,7 @@ def find_jdks():
     ]
     for r in roots:
         if os.path.isdir(r):
-            if resolver:
+            if has_resolver:
                 chk_jdk('root check:', r)
             for sub in os.listdir(r):
                 hasKey, hasJ = chk_keys(sub)
@@ -272,14 +273,14 @@ def loadcmd():
 
 def parse():
     #Define globals to edit
-    global target, search, intensity, application_bundle, resolver, tasks, bundle_JDK, bundle_JRE, rsymlinks, rcmd, custom_paths
+    global target, search, intensity, application_bundle, resolver, tasks, bundle_JDK, bundle_JRE, rsymlinks, rcmd, has_resolver, custom_paths
 
     #Sanity Checks
     target = target.strip()
     search = search.replace(' ', '').upper()
     intensity = intensity.replace(' ', '').upper()
     application_bundle = application_bundle.replace(' ', '').upper()
-    resolver = resolver.strip().replace(' ', '').upper()
+    resolver = resolver.replace(' ', '').upper()
     if not target:
         target = '1.8.' #TODO: change to 8-6 when range support is allowed
     if not search:
@@ -297,19 +298,25 @@ def parse():
     tasks = search.replace(',', '|').split('|')
 
     #Parse Application Bundle into cached booleans bundle_JDK & bundle_JRE
-    anny = '*' in application_bundle or 'ANY' in application_bundle
-    bundle_JDK = anny or 'JDK' in application_bundle
-    bundle_JRE = anny or 'JRE' in application_bundle or 'JAVA' in application_bundle
-    if not bundle_JDK and not bundle_JRE:
-        sys.stderr.write("Fatal Error Java Application Bundle String is Invalid or Missing For '" + application_bundle + "'\n")
-        sys.exit(-1)
+    if '*' in application_bundle or 'ANY' in application_bundle:
+        bundle_JRE = True
+        bundle_JDK = True
+    else:
+        bundle_JRE = 'JRE' in application_bundle or 'JAVA' in application_bundle
+        bundle_JDK = 'JDK' in application_bundle
+        if not bundle_JDK and not bundle_JRE:
+            sys.stderr.write("Fatal Error Java Application Bundle is Invalid or Missing '" + application_bundle + "'\n")
+            sys.exit(-1)
 
     #Parse Resolver into cached useable boolean resolve_symlinks & resolve_cmd
-    anny = '*' in resolver or 'ANY' in resolver
-    rsymlinks = anny or 'SYMLINK' in resolver or 'SYMBOLICLINK' in resolver
-    rcmd = anny or 'CMD' in resolver or 'COMMAND' in resolver
-    if not rsymlinks and not rcmd:
-        resolver = ''
+    if '*' in resolver or 'ANY' in resolver:
+        rsymlinks = True
+        rcmd = True
+        has_resolver = True
+    else:
+        rsymlinks = 'SYMLINK' in resolver or 'SYMBOLICLINK' in resolver
+        rcmd = 'CMD' in resolver or 'COMMAND' in resolver
+        has_resolver = rsymlinks or rcmd
 
     #Parse Custom Paths
     if paths:
