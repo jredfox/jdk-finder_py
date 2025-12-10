@@ -14,6 +14,7 @@ import subprocess
 ###################
 # TODONOW:
 # - re-check config and parse method
+# - cli api look into --recurse_PATH & --recurse_paths
 # - make macOS work
 # - make windows work
 #
