@@ -13,7 +13,8 @@ import subprocess
 ###################
 ###################
 # TODONOW:
-# - overhaul command arguments
+# - overhaul config
+# - parse method for after cli and cfg load so they are not repeatedly dynmaically grabbed
 # - make macOS work
 # - make windows work
 #
@@ -55,21 +56,18 @@ VOLUME_WIN_REGEX = re.compile(
 )
 
 #Flag Options
-f_target = ''
-f_recurse = False
-f_quick = False
-f_update = False
-f_path = False
-f_path_first = True
-f_home = False
-f_mac_path = False
-f_non_extensive = False
-f_exact = False
-f_all = False
-f_value_type = 'JDK'
-f_resolve_javac = True
-f_config_load = False
-f_no_path = False
+target = ''
+recurse = False
+quick = False
+update = False
+clean_cache = False
+srch_all = False
+search = ''
+intensity = ''
+paths = ''
+application_bundle = ''
+resolver = ''
+config_load = False
 flags = []
 
 str_bin = 'Contents/Home/bin' if isMac else 'bin'
@@ -190,7 +188,7 @@ def find_jdks():
     ]
     for r in roots:
         if os.path.isdir(r):
-            if f_resolve_javac:
+            if resolve:
                 chk_jdk('root check:', r)
             for sub in os.listdir(r):
                 hasKey, hasJ = chk_keys(sub)
@@ -244,46 +242,39 @@ def loadcmd():
     if len(sys.argv) < 2:
         return False
     #Define Global Vars getting edited
-    global f_target, f_recurse, f_quick, f_update, f_path, f_path_first, f_home, f_mac_path, f_non_extensive, f_exact, f_all, f_value_type, f_resolve_javac, f_config_load, f_no_path
+    global target, recurse, quick, update, clean_cache, srch_all, search, intensity, paths, application_bundle, resolver, config_load
     #Parse Command Line Args
     SENTINEL = object()
     parser = argparse.ArgumentParser(add_help=False)
-    parser.add_argument('-t','--target', metavar='"1.8."', default=SENTINEL, help='Target')
+    parser.add_argument('-t','--target', metavar='"1.8."', default=SENTINEL, help='Target. Examples: "8-6", "6-8", "1.7.|1.8.|17|<9&+5 TODO: SW EW REGEX"')
     parser.add_argument('target_path', nargs='?', default=SENTINEL, metavar='"1.8."', help='Target as a Positional Paramater')
     parser.add_argument('-r','--recurse', action='store_true', default=SENTINEL, help='Deep Recursion')
-    parser.add_argument('-q','--quick', action='store_true', default=SENTINEL, help='Quickly fetches the JDK path from the cache with minimal checks')
-    parser.add_argument('-u','--update', action='store_true', default=SENTINEL, help='Update Used with -q in order to update the cache a-sync if -q succeeds')
-    parser.add_argument('-p','--path', action='store_true', default=SENTINEL, help='PATH search only!')
-    parser.add_argument('-f','--path_first', default=SENTINEL, metavar='TRUE|FALSE', help='Search PATH first before looking in known JDK Installs!')
-    parser.add_argument('-h','--home', action='store_true', default=SENTINEL, help='Search for home & local JDK Installs by the user!')
-    parser.add_argument('-m','--mac_path', action='store_true', default=SENTINEL, help='Search for official macOS JDK Installs!')
-    parser.add_argument('-n','--non_extensive', action='store_true', default=SENTINEL, help='Search for Standard JDK Installs on the linux paths!')
-    parser.add_argument('-e','--exact', action='store_true', default=SENTINEL, help='JDK Version String Must Match Exactly this argument!')
-    parser.add_argument('-a','--all', action='store_true', default=SENTINEL, help='Search for all Applicable JDK Installs not just the first one found!')
-    parser.add_argument('-v','--value_type', default=SENTINEL, metavar='JDK|JRE|ANY', help='JDK Value Install Types')
-    parser.add_argument('-x','--resolve_javac', default=SENTINEL, metavar='TRUE|FALSE', help='Resolve Symbolic Links(Symlinks) of the javac executeable!')
-    parser.add_argument('-c','--config_load', action='store_true', default=SENTINEL, help='Config Overrides CLI flags that have not been populated yet! Normally the config only loads without any Command line(CLI) flags.')
-    parser.add_argument('-i', '--no_path', action='store_true', default=SENTINEL, help="Seaches JDK Installs with no PATH!")
+    parser.add_argument('-q','--quick', action='store_true', default=SENTINEL, help='Quickly fetches the Java Path from the Cache with minimal checks')
+    parser.add_argument('-u','--update', action='store_true', default=SENTINEL, help='Update Java Cache A-SYNC if the cache check succeeds and the version < max')
+    parser.add_argument('-k','--clean_cache', action='store_true', default=SENTINEL, help='Cleans the Java Cache which forces a live synchronous Java search!')
+    parser.add_argument('-a','--all', dest='srch_all', action='store_true', default=SENTINEL, help='Search for all Applicable Java Installs not just the first one found!')
+    parser.add_argument('-s','--search', metavar='\'PATH|INSTALLS|HOME|CUSTOM\'', default=SENTINEL, help="Search Operations and Order! Example -s 'PATH|INSTALLS|HOME' Example 2: -s '*' Says to search all types and use the normal search order")
+    parser.add_argument('-i','--intensity', metavar='NORMAL|MIN|OS', default=SENTINEL, help='Search Intensity where Min does minimal non extensive searches based on the search operations and OS. OS Searches Standard Official Java Installation Paths only')
+    parser.add_argument('-p','--paths', metavar='\'Dir;Dir 2\'', default=SENTINEL, help='Search Custom Paths separated by \';\' or \':\' Using glob while working with -r. Replaces /bin with /Contents/Home/bin on macOs. Example: \'JDK/bin;/usr/lib/jvm/*/bin 2:~/.jdks\'. If used with -s must contain \'CUSTOM\' in the search')
+    parser.add_argument('-b','--application_bundle', default=SENTINEL, metavar='JDK|JRE|ANY|*', help='Java Application Bundle Types')
+    parser.add_argument('-x','--resolver', default=SENTINEL, metavar='\'SYMLINK|COMMAND|NONE\'', help="Resolve the actual path of the javac executeable! Examples: -x 'SYMLINK|COMMAND', -x '*'")
+    parser.add_argument('-c','--config', dest='config_load', action='store_true', default=SENTINEL, help='Configuration Values Are Used If the CLI Has not overridden them!')
     parser.add_argument('--help', action='help', help='Show this help message and exit')
 
     args = parser.parse_args()
     for name, value in vars(args).items():
         if not value == SENTINEL:
-            globals()['f_' + name] = value
+            globals()[name] = value
             flags.append(name)
 
     #Correct Target & Flags
     if 'target_path' in flags:
         flags.remove('target_path')
-    if args.target == SENTINEL:
-        if not args.target_path == SENTINEL:
-            f_target = args.target_path
-            flags.append('target')
-    f_path_first = str(f_path_first).lower().startswith('t')
-    f_value_type = str(f_value_type)
-    f_resolve_javac = str(f_resolve_javac).lower().startswith('t')
+    if args.target == SENTINEL and (not args.target_path == SENTINEL):
+        target = args.target_path
+        flags.append('target')
 
-    return (not f_config_load)
+    return (not config_load)
 
 if __name__ == "__main__":
     #load the default config
@@ -291,7 +282,7 @@ if __name__ == "__main__":
         load_cfg()
 
     #Main Method Program call depending upon recurse flag
-    if f_recurse:
+    if recurse:
         find_jdks_recurse()
     else:
         find_jdks()
