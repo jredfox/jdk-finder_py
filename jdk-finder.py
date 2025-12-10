@@ -18,7 +18,7 @@ import subprocess
 # - make windows work
 #
 # TODO:
-# - When JDK < Target Range Max and either -u or no arguments are specified it will update the cache a-sync with a search
+# - When JDK < Target and -u or 0 args update cache A-SYNC
 # - Add Small JDK Install search for Windows Official Oracle & Adoptium only!
 # - Re-Implement jdk-finder.py V1 checks into the program so it actually works
 #
