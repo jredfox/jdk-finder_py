@@ -48,7 +48,7 @@ def loadcmd():
     parser.add_argument('-b','--application_bundle', default=SENTINEL, metavar='JDK|JRE|ANY|*', help='Java Value Install Types')
     parser.add_argument('-i','--intensity', metavar='NORMAL|MIN|OS', default=SENTINEL, help='Search Intensity where Min does minimal non extensive searches based on the search opperations and OS. OS Searches Standard Official Java Installation Paths only')
     parser.add_argument('-x','--resolver', default=SENTINEL, metavar='\'SYMLINK|COMMAND|NONE\'', help="Resolve the actual path of the javac executeable! Examples: -x 'SYMLINK|COMMAND', -x '*'")
-    parser.add_argument('-c','--config_load', action='store_true', default=SENTINEL, help='Configuration Values Are Used If the CLI Has not overriden them!')
+    parser.add_argument('-c','--config', action='store_true', default=SENTINEL, help='Configuration Values Are Used If the CLI Has not overriden them!')
     parser.add_argument('--help', action='help', help='Show this help message and exit')
 
     args = parser.parse_args()
