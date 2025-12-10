@@ -8,7 +8,7 @@ try:
 except ImportError:
     import configparser  # Python 3
 
-#Flag Options
+#Flags
 target = ''
 recurse = False
 quick = False
@@ -22,6 +22,14 @@ application_bundle = ''
 resolver = ''
 config_load = False
 flags = []
+
+#Processed data from search application_bundle and resolver
+tasks = []
+bundle_JDK = True
+bundle_JRE = False
+rsymlinks = True
+rcmd = False
+custom_paths = set()
 
 #Loads the program's command line arguments into memory 
 #Returns True if flags were set from the command line and the config should not load
@@ -64,7 +72,65 @@ def loadcmd():
 
     return (not config_load)
 
-loadcmd()
+def parse():
+    #Define globals to edit
+    global target, search, intensity, application_bundle, resolver, tasks, bundle_JDK, bundle_JRE, rsymlinks, rcmd, custom_paths
+
+    #Sanity Checks
+    target = target.strip().upper()
+    search = search.replace(' ', '').upper()
+    intensity = intensity.replace(' ', '').upper()
+    application_bundle = application_bundle.replace(' ', '').upper()
+    resolver = resolver.strip().replace(' ', '').upper()
+    if not target:
+        target = '8-6'
+    if not search:
+        search = 'PATH|INSTALLS|HOME|CUSTOM'
+    if not intensity:
+        intensity = 'NORMAL'
+    if not application_bundle:
+        application_bundle = 'JDK'
+    if not resolver:
+        resolver = 'SYMLINK'
+
+    #TODO: target parse into ranges and lists with search regex & patterns in the future instead of one static target
+    
+    #Parse the tasks into an ordered static list
+    tasks = search.replace(',', '|').replace(' ', '').split('|')
+
+    #Parse Application Bundle into cached booleans bundle_JDK & bundle_JRE
+    anny = '*' in application_bundle or 'ANY' in application_bundle
+    bundle_JDK = anny or 'JDK' in application_bundle
+    bundle_JRE = anny or 'JRE' in application_bundle or 'JAVA' in application_bundle
+    if not bundle_JDK and not bundle_JRE:
+        sys.stderr.write("Fatle Error Java Application Bundle String is Invalid or Missing For '" + application_bundle + "'\n")
+        sys.exit(-1)
+
+    #Parse Resolver into cached useable boolean resolve_symlinks & resolve_cmd
+    anny = '*' in resolver or 'ANY' in resolver
+    rsymlinks = anny or 'SYMLINK' in resolver or 'SYMBOLICLINK' in resolver
+    rcmd = anny or 'CMD' in resolver or 'COMMAND' in resolver
+
+    #Parse Custom Paths
+    if paths:
+        custom_paths = paths.strip().replace(';', ':').split(':')
+
+def main():
+    loadcmd()
+    parse()
+
+    for t in tasks:
+        print('task ' + t)
+    print('JDK:' + str(bundle_JDK))
+    print('JRE:' + str(bundle_JRE))
+    print('resolve symlinks:' + str(rsymlinks))
+    print('resolve cmd:' + str(rcmd))
+
+    for p in custom_paths:
+        print('path:"' + p + '"')
+
+if __name__ == "__main__":
+    main()
 
 """
 for k, v in globals().items():

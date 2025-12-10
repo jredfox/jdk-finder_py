@@ -239,7 +239,7 @@ def loadcmd():
     parser.add_argument('-k','--clean_cache', action='store_true', default=SENTINEL, help='Cleans the Java Cache which forces a live synchronous Java search!')
     parser.add_argument('-a','--all', dest='srch_all', action='store_true', default=SENTINEL, help='Search for all Applicable Java Installs not just the first one found!')
     parser.add_argument('-s','--search', metavar='\'PATH|INSTALLS|HOME|CUSTOM\'', default=SENTINEL, help="Search Operations and Order! Example -s 'PATH|INSTALLS|HOME' Example 2: -s '*' Says to search all types and use the normal search order")
-    parser.add_argument('-i','--intensity', metavar='NORMAL|MIN|OS', default=SENTINEL, help='Search Intensity where Min does minimal non extensive searches based on the search operations and OS. OS Searches Standard Official Java Installation Paths only')
+    parser.add_argument('-i','--intensity', metavar='NORMAL|MIN|OS', default=SENTINEL, help='Search Intensity where Min does minimal non extensive searches based on the search operations. OS Searches Standard Official Java Installation Paths only')
     parser.add_argument('-p','--paths', metavar='\'Dir;Dir 2\'', default=SENTINEL, help='Search Custom Paths separated by \';\' or \':\' Using glob while working with -r. Replaces /bin with /Contents/Home/bin on macOs. Example: \'JDK/bin;/usr/lib/jvm/*/bin 2:~/.jdks\'. If used with -s must contain \'CUSTOM\' in the search')
     parser.add_argument('-b','--application_bundle', default=SENTINEL, metavar='JDK|JRE|ANY|*', help='Java Application Bundle Types')
     parser.add_argument('-x','--resolver', default=SENTINEL, metavar='\'SYMLINK|COMMAND|NONE\'', help="Resolve the actual path of the javac executeable! Examples: -x 'SYMLINK|COMMAND', -x '*'")
@@ -273,7 +273,7 @@ def parse():
     """
     #Define globals to edit
     global target, search, intensity, application_bundle, resolver
-    #Sanity Checks
+        #Sanity Checks
     if not target.strip():
         target = '8-6'
     if not search.strip():
@@ -285,11 +285,11 @@ def parse():
     if not resolver.strip():
         resolver = '*'
 
-    target = target.upper()
-    search = search.upper()
-    intensity = intensity.upper()
-    application_bundle = application_bundle.upper()
-    resolver = resolver.upper()
+    target = target.strip().upper()
+    search = search.strip().upper()
+    intensity = intensity.strip().upper()
+    application_bundle = application_bundle.strip().upper()
+    resolver = resolver.strip().upper()
 
     print('t ' + target)
     print('s ' + search)
