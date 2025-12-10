@@ -21,7 +21,6 @@ paths = ''
 application_bundle = ''
 resolver = ''
 config_load = False
-
 flags = []
 
 #Loads the program's command line arguments into memory 
