@@ -14,31 +14,17 @@ import subprocess
 ###################
 # TODONOW:
 # - overhaul config
-# - parse method for after cli and cfg load so they are not repeatedly dynmaically grabbed
+# - valid / parse method for after cli and cfg load so they are not repeatedly dynmaically grabbed
 # - make macOS work
 # - make windows work
 #
 # TODO:
-# - When JDK < Target and -u or 0 args update cache A-SYNC
+# - When JDK < Target and -u or 0 args update cache A-SYNC (-u get enabled by default inside the config when generating)
 # - Add Small JDK Install search for Windows Official Oracle & Adoptium only!
 # - Re-Implement jdk-finder.py V1 checks into the program so it actually works
 #
 # NOTES:
 # -If you plan to run this program multiple times for one process please reset all the global variables back to their defaults first
-#
-# FLAGS:
-# * -a Accept ALL JDKs within that match the target or all if target is "*"
-# * -p PATH only search
-# * -f <true/false> PATH first
-# * -h Home & Local User installs like ~/.jdks
-# * -m Mac Paths only. When on macOS Only Search Standard macOS JDK Installation Paths
-# * -n Non Extensive search (only applies to non windows but will only check the PATH and standard installations)
-# * -e extact version string match
-# * -q quickly fetch it from the cache without verification other then checking if java & javac exist
-# * -u update the cache a-sync after -q has ran
-# * -t target may be single string, range, or an array of strings / ranges Examples: "8", "8-6", "6-8", "11-11, 17-19, 21-25+", "<6, 17+" where this matches <5 and also 17 or higher
-# * -v <jre, jdk, any> accepted jdk installation types
-# * -x <true/false> Resolve symlink of javac executeable itself
 # 
 # Flags Done:
 # * -r deep recursion instead instead of looking at specified installation locations
