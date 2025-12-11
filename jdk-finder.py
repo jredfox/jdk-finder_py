@@ -356,5 +356,5 @@ if __name__ == "__main__":
     else:
         find_jdks()
 
-    #Exit with error of 21 if not found
+    #Exit with error of 404 if not found
     sys.exit(404)
