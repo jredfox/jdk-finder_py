@@ -50,7 +50,7 @@ quick = False
 update = False
 clean_cache = False
 srch_all = False
-search = '*'
+search = ''
 intensity = 'NORMAL'
 paths = ''
 application_bundle = 'JDK'
@@ -288,7 +288,7 @@ def parse():
     if not target:
         target = '1.8.' #TODO: change to 8-6 when range support is allowed
     if not search:
-        search = 'PATH|CUSTOM|INSTALLS|HOME'
+        search = 'PATH|CUSTOM|INSTALLS'
     if not intensity:
         intensity = 'NORMAL'
     if not application_bundle:
