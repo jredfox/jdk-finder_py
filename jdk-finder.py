@@ -13,12 +13,12 @@ import subprocess
 ###################
 ###################
 # TODONOW:
-# - recurse method may need to be optimized?????
-# - cli api look into --recurse_PATH & --recurse_paths
+# - add --search_recurse which allows you to specify which searches are allowed to use recursion
 # - make macOS work
 # - make windows work
 #
 # TODO:
+# - macOS investigate if /bin is a thing with some OpenJDK distros
 # - p make sure to replace /bin with the actual bin string
 # - When JDK < Target and -u or 0 args update cache A-SYNC (-u get enabled by default inside the config when generating)
 # - Add Small JDK Install search for Windows Official Oracle & Adoptium only!
