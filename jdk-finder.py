@@ -252,7 +252,7 @@ def loadcmd():
     parser.add_argument('-u','--update', action='store_true', default=SENTINEL, help='Update Java Cache A-SYNC if the cache check succeeds and the version < max')
     parser.add_argument('-k','--clean_cache', action='store_true', default=SENTINEL, help='Cleans the Java Cache which forces a live synchronous Java search!')
     parser.add_argument('-a','--all', dest='srch_all', action='store_true', default=SENTINEL, help='Search for all Applicable Java Installs not just the first one found!')
-    parser.add_argument('-s','--search', metavar='\'PATH|INSTALLS|HOME|CUSTOM\'', default=SENTINEL, help="Search Operations and Order! Example -s 'PATH|INSTALLS|HOME' Example 2: -s '*' Says to search all types and use the normal search order")
+    parser.add_argument('-s','--search', metavar='\'PATH|CUSTOM|INSTALLS|HOME\'', default=SENTINEL, help="Search Operations and Order! Example -s 'CUSTOM|PATH|INSTALLS|HOME' Example 2: -s '*' Says to search all types and use the normal search order")
     parser.add_argument('-i','--intensity', metavar='NORMAL|MIN|OS', default=SENTINEL, help='Search Intensity where Min does minimal non extensive searches based on the search operations and OS. OS Searches Standard Official Java Installation Paths only')
     parser.add_argument('-p','--paths', metavar='\'Dir;Dir 2\'', default=SENTINEL, help='Search Custom Paths separated by \';\' or \':\' Using glob while working with -r. Replaces /bin with /Contents/Home/bin on macOs. Example: \'JDK/bin;/usr/lib/jvm/*/bin 2:~/.jdks\'. If used with -s must contain \'CUSTOM\' in the search')
     parser.add_argument('-b','--application_bundle', default=SENTINEL, metavar='JDK|JRE|ANY|*', help='Java Application Bundle Types')
@@ -278,7 +278,6 @@ def loadcmd():
 def parse():
     #Define globals to edit
     global target, search, intensity, application_bundle, resolver, tasks, bundle_JDK, bundle_JRE, rsymlinks, rcmd, has_resolver, custom_paths
-
     #Sanity Checks
     target = target.strip()
     search = search.replace(' ', '').upper()
@@ -288,7 +287,7 @@ def parse():
     if not target:
         target = '1.8.' #TODO: change to 8-6 when range support is allowed
     if not search or ('*' in search or 'ANY' in search):
-        search = 'PATH|INSTALLS|HOME|CUSTOM'
+        search = 'PATH|CUSTOM|INSTALLS|HOME'
     if not intensity:
         intensity = 'NORMAL'
     if not application_bundle:
