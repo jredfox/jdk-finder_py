@@ -16,7 +16,6 @@ import subprocess
 # - re-check config and parse method
 # - recurse method may need to be optimized?????
 # - cli api look into --recurse_PATH & --recurse_paths
-# - should * fill missing paths instead of just fixed order? PATH|* --> "CUSTOM|INSTALLS|HOME". Example 2: "HOME|*" --> HOME|PATH|CUSTOM|INSTALLS|HOME --> HOME|PATH|CUSTOM|INSTALLS
 # - make macOS work
 # - make windows work
 #
@@ -288,7 +287,7 @@ def parse():
     resolver = resolver.replace(' ', '').upper()
     if not target:
         target = '1.8.' #TODO: change to 8-6 when range support is allowed
-    if not search or ('*' in search or 'ANY' in search):
+    if not search:
         search = 'PATH|CUSTOM|INSTALLS|HOME'
     if not intensity:
         intensity = 'NORMAL'
@@ -300,7 +299,11 @@ def parse():
     #TODO: target parse into ranges and lists with search regex & patterns in the future instead of one static target
     
     #Parse the tasks into an ordered static list
-    tasks = search.replace(',', '|').split('|')
+    search = search.replace('ANY', '*').replace('*', 'PATH|CUSTOM|INSTALLS|HOME')
+    ctasks = search.replace(',', '|').split('|')
+    for t in ctasks:
+        if not t in tasks:
+            tasks.append(t)
 
     #Parse Application Bundle into cached booleans bundle_JDK & bundle_JRE
     if '*' in application_bundle or 'ANY' in application_bundle:
