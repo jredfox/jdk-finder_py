@@ -71,7 +71,7 @@ custom_paths = []
 str_bin = 'Contents/Home/bin' if isMac else 'bin'
 visited = set()
 javas = []
-exes = ("java", "javac")
+exes = ("java" + exe, "javac" + exe)
 
 #Uses a simpler way to find JDKs using recursion.
 def find_jdks_recurse():
