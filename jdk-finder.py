@@ -14,6 +14,7 @@ import subprocess
 ###################
 # TODONOW:
 # - unix recurse test to see if applying the same folder duplicates results
+# - discord
 # - make macOS work
 # - make windows work
 #
