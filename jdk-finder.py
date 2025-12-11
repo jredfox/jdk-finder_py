@@ -13,7 +13,7 @@ import subprocess
 ###################
 ###################
 # TODONOW:
-# - re-check config and parse method
+# - re-check config
 # - recurse method may need to be optimized?????
 # - cli api look into --recurse_PATH & --recurse_paths
 # - make macOS work
@@ -298,7 +298,7 @@ def parse():
 
     #TODO: target parse into ranges and lists with search regex & patterns in the future instead of one static target
     
-    #Parse the tasks into an ordered static list
+    #Parse the tasks preserving order and removing duplicates
     search = search.replace('ANY', '*').replace('*', 'PATH|CUSTOM|INSTALLS|HOME')
     ctasks = search.replace(',', '|').split('|')
     for t in ctasks:
@@ -335,9 +335,6 @@ if __name__ == "__main__":
     if not loadcmd():
         load_cfg()
     parse()
-
-    print(tasks)
-    #sys.exit(0)
 
     #Main Method Program call depending upon recurse flag
     if recurse:
