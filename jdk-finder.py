@@ -13,11 +13,12 @@ import subprocess
 ###################
 ###################
 # TODONOW:
-# - add -R --search_recurse which allows you to specify which searches are allowed to use recursion
+# - unix recurse test to see if applying the same folder duplicates results
 # - make macOS work
 # - make windows work
 #
 # TODO:
+# - add -R --search_recurse which allows you to specify which searches are allowed to use recursion
 # - macOS investigate if /bin is a thing with some OpenJDK distros
 # - p make sure to replace /bin with the actual bin string
 # - When JDK < Target and -u or 0 args update cache A-SYNC (-u get enabled by default inside the config when generating)
