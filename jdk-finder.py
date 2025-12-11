@@ -14,6 +14,7 @@ import subprocess
 ###################
 # TODONOW:
 # - re-check config and parse method
+# - recurse method may need to be optimized?????
 # - cli api look into --recurse_PATH & --recurse_paths
 # - make macOS work
 # - make windows work
@@ -49,11 +50,11 @@ quick = False
 update = False
 clean_cache = False
 srch_all = False
-search = ''
-intensity = ''
+search = '*'
+intensity = 'NORMAL'
 paths = ''
-application_bundle = ''
-resolver = ''
+application_bundle = 'JDK'
+resolver = 'SYMLINK'
 config_load = False
 flags = []
 
@@ -286,7 +287,7 @@ def parse():
     resolver = resolver.replace(' ', '').upper()
     if not target:
         target = '1.8.' #TODO: change to 8-6 when range support is allowed
-    if not search:
+    if not search or ('*' in search or 'ANY' in search):
         search = 'PATH|INSTALLS|HOME|CUSTOM'
     if not intensity:
         intensity = 'NORMAL'
@@ -332,7 +333,7 @@ if __name__ == "__main__":
     parse()
 
     print(srch_all)
-    sys.exit(0)
+    #sys.exit(0)
 
     #Main Method Program call depending upon recurse flag
     if recurse:
