@@ -13,7 +13,7 @@ import subprocess
 ###################
 ###################
 # TODONOW:
-# - add --search_recurse which allows you to specify which searches are allowed to use recursion
+# - add -R --search_recurse which allows you to specify which searches are allowed to use recursion
 # - make macOS work
 # - make windows work
 #
@@ -30,6 +30,7 @@ import subprocess
 # Flags Done:
 # * -r deep recursion instead instead of looking at specified installation locations
 # * -c load the config flag values exlcuding target even if flags were entered through the command line
+# * -g cli args overrides new configuration gen
 ###################
 
 VERSION = "2.0.0"
