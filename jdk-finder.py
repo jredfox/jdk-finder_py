@@ -271,7 +271,7 @@ def loadcmd():
     parser.add_argument('-b','--application_bundle', default=SENTINEL, metavar='JDK|JRE|ANY|*', help='Java Application Bundle Types')
     parser.add_argument('-x','--resolver', default=SENTINEL, metavar='\'SYMLINK|COMMAND|NONE\'', help="Resolve the actual path of the javac executeable! Examples: -x 'SYMLINK|COMMAND', -x '*'")
     parser.add_argument('-c','--config', dest='config_load', action='store_true', default=SENTINEL, help='Configuration Values Are Used If the CLI Has not overridden them!')
-    parser.add_argument('-g','--gen_override', action='store_true', default=SENTINEL, help='Configuration Gen Gets Overriden by Command Line Flags!')
+    parser.add_argument('-g','--gen_override', action='store_true', default=SENTINEL, help='Configuration Gen Gets Overriden by Command Line Flags! Requires -c')
     parser.add_argument('--help', action='help', help='Show this help message and exit')
 
     args = parser.parse_args()
