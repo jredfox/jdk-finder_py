@@ -78,8 +78,9 @@ def find_jdks_recurse():
     start = time.time()
     if isWindows:
         root_dir = os.path.realpath('\\')
+        findjavas(os.path.join(root_dir), 'Program Files'))
         for p in os.listdir(root_dir):
-            if p == 'Program Files' or (p.startswith('Program Files (') and p.endswith(')')):
+            if p.startswith('Program Files (') and p.endswith(')'):
                 findjavas(os.path.join(root_dir, p))
     elif isMac:
         print('TODO:')#//TODO:
