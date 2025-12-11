@@ -16,6 +16,7 @@ import subprocess
 # - re-check config and parse method
 # - recurse method may need to be optimized?????
 # - cli api look into --recurse_PATH & --recurse_paths
+# - should * fill missing paths instead of just fixed order? PATH|* --> "CUSTOM|INSTALLS|HOME". Example 2: "HOME|*" --> HOME|PATH|CUSTOM|INSTALLS|HOME --> HOME|PATH|CUSTOM|INSTALLS
 # - make macOS work
 # - make windows work
 #
@@ -228,7 +229,8 @@ def load_cfg():
     for f in bflags:
         if not f in flags:
             globals()[f] = config.get('main', f)[:1].lower() == 't'
-    srch_all = config.get('main', 'all')[:1].lower() == 't'
+    if not 'srch_all' in flags:
+        srch_all = config.get('main', 'all')[:1].lower() == 't'
 
     #Save Config
     with open(cfgpath, 'w') as configfile:
