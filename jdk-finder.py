@@ -69,12 +69,13 @@ has_resolver = True
 custom_paths = []
 
 str_bin = 'Contents/Home/bin' if isMac else 'bin'
-visited = set()
+jdirs = set()
 javas = []
 exes = ("java" + exe, "javac" + exe)
 
 #Uses a simpler way to find JDKs using recursion.
 def find_jdks_recurse():
+    start = time.time()
     if isWindows:
         print('TODO:')#//TODO:
     if isMac:
@@ -88,23 +89,45 @@ def find_jdks_recurse():
         findjavas('/etc/alternatives')
         findjavas('/opt')
         findjavas('/usr/local')
-    global javas, visited
-    visited = set() #clear RAM
+    global javas, jdirs
+    jdirs = set() #clear RAM
     for jdk in javas:
         chk_jdk('found jdk:', jdk)
     javas = [] #clear RAM
+    print(time.time() - start)
 
-def findjavas(path):
-    for root, dirs, files in os.walk(path, followlinks=True):
+def findjavas(d):
+    if isWindows:
+        findjavasw(d)
+    else:
+        findjavasu(d)
+
+def findjavasw(d):
+    for root, dirs, files in os.walk(d, followlinks=True):
         # Detect loop or repeated symlink target
         real = os.path.realpath(root)
-        if real in visited:
+        if real in jdirs:
             dirs[:] = []  # Don't recurse further
             continue
-        visited.add(real)
+        jdirs.add(real)
 
         if any(t in files for t in exes):
             javas.append(real)
+
+#Find javas but optimized for unix (linux & macOS)
+def findjavasu(d):
+    for dirpath, dirnames, filenames in os.walk(d, followlinks=True):
+        st = os.stat(dirpath)
+        scandirs = []
+        for dirname in dirnames:
+            st = os.stat(os.path.join(dirpath, dirname))
+            dirkey = st.st_dev, st.st_ino
+            if dirkey not in jdirs:
+                jdirs.add(dirkey)
+                scandirs.append(dirname)
+        dirnames[:] = scandirs
+        if any(t in filenames for t in exes):
+            javas.append(os.path.realpath(dirpath))
 
 keys = [
     'jvm',
