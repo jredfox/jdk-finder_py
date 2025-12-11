@@ -327,7 +327,7 @@ def parse():
         bundle_JDK = 'JDK' in application_bundle
         if not bundle_JDK and not bundle_JRE:
             sys.stderr.write("Fatal Error Java Application Bundle is Invalid or Missing '" + application_bundle + "'\n")
-            sys.exit(-1)
+            sys.exit(1)
 
     #Parse Resolver into cached useable boolean resolve_symlinks & resolve_cmd
     if '*' in resolver or 'ANY' in resolver:
@@ -356,5 +356,5 @@ if __name__ == "__main__":
     else:
         find_jdks()
 
-    #Exit with error of 1 if not found
-    sys.exit(1)
+    #Exit with error of 21 if not found
+    sys.exit(404)
