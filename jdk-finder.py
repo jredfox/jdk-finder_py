@@ -114,7 +114,8 @@ def findjavasw(d):
         if any(t in files for t in exes):
             javas.append(real)
 
-#Find javas but optimized for unix (linux & macOS)
+#Find javas but optimized for unix (linux & macOS) Safer against symlinks
+#Found from this answer https://stackoverflow.com/a/36977656
 def findjavasu(d):
     for dirpath, dirnames, filenames in os.walk(d, followlinks=True):
         st = os.stat(dirpath)
