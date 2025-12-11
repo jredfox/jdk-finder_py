@@ -202,6 +202,8 @@ def find_jdks():
 
 #Load the Config File
 def load_cfg():
+    #Define Global Vars getting edited
+    global target, recurse, quick, update, clean_cache, srch_all, search, intensity, paths, application_bundle, resolver
     #Make Config Dir
     cdir = os.path.join(os.path.dirname(os.path.realpath(__file__)), 'cache')
     if not os.path.isdir(cdir):
@@ -216,8 +218,6 @@ def load_cfg():
         config.set('main', f, str(globals()[f]))
     for f in bflags:
         config.set('main', f, str(globals()[f]))
-    #Define Global Vars getting edited
-    global target, recurse, quick, update, clean_cache, srch_all, search, intensity, paths, application_bundle, resolver
     #Parse Config and Values into memory
     config.read(cfgpath)
     for f in sflags:
