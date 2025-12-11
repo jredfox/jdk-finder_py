@@ -289,7 +289,7 @@ def loadcmd():
     parser = argparse.ArgumentParser(add_help=False)
     parser.add_argument('-t','--target', metavar='"1.8."', default=SENTINEL, help='Target. Examples: "8-6", "6-8", "1.7.|1.8.|17|<9&+5 TODO: SW EW REGEX"')
     parser.add_argument('target_path', nargs='?', default=SENTINEL, metavar='"1.8."', help='Target as a Positional Paramater')
-    parser.add_argument('-r','--recurse', action='store_true', default=SENTINEL, help='Deep Recursion')
+    parser.add_argument('-r','--recurse', action='store_true', default=SENTINEL, help='Deep Recursion Search Except on the PATH')
     parser.add_argument('-q','--quick', action='store_true', default=SENTINEL, help='Quickly fetches the Java Path from the Cache with minimal checks')
     parser.add_argument('-u','--update', action='store_true', default=SENTINEL, help='Update Java Cache A-SYNC if the cache check succeeds and the version < max')
     parser.add_argument('-k','--clean_cache', action='store_true', default=SENTINEL, help='Cleans the Java Cache which forces a live synchronous Java search!')
