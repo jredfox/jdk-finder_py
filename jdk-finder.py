@@ -43,6 +43,7 @@ VOLUME_WIN_REGEX = re.compile(
     re.IGNORECASE
 )
 
+dsrch = 'PATH|CUSTOM|INSTALLS'
 #Flags
 target = ''
 recurse = False
@@ -50,12 +51,13 @@ quick = False
 update = False
 clean_cache = False
 srch_all = False
-search = 'PATH|CUSTOM|INSTALLS'
+search = dsrch
 intensity = 'NORMAL'
 paths = ''
 application_bundle = 'JDK'
 resolver = 'SYMLINK'
 config_load = False
+gen_override = False
 flags = []
 
 #Processed data from CLI and / or Config
@@ -215,11 +217,22 @@ def load_cfg():
     config.add_section('main')
     sflags = ['target', 'search', 'intensity', 'paths', 'application_bundle', 'resolver']
     bflags = ['recurse', 'quick', 'update', 'clean_cache']
-    for f in sflags:
-        config.set('main', f, str(globals()[f]))
-    for f in bflags:
-        config.set('main', f, str(globals()[f]))
-    config.set('main', 'all', str(srch_all))
+    if gen_override:
+        for f in sflags:
+            config.set('main', f, str(globals()[f]))
+        for f in bflags:
+            config.set('main', f, str(globals()[f]))
+        config.set('main', 'all', str(srch_all))
+    else:
+        config.set('main', 'target', '')
+        config.set('main', 'search', dsrch)
+        config.set('main', 'intensity', 'NORMAL')
+        config.set('main', 'paths', '')
+        config.set('main', 'application_bundle', 'JDK')
+        config.set('main', 'resolver', 'SYMLINK')
+        for f in bflags:
+            config.set('main', f, 'False')
+        config.set('main', 'all', 'False')
     #Parse Config and Values into memory
     config.read(cfgpath)
     for f in sflags:
@@ -242,7 +255,7 @@ def loadcmd():
     if len(sys.argv) < 2:
         return False
     #Define Global Vars getting edited
-    global target, recurse, quick, update, clean_cache, srch_all, search, intensity, paths, application_bundle, resolver, config_load
+    global target, recurse, quick, update, clean_cache, srch_all, search, intensity, paths, application_bundle, resolver, config_load, gen_override
     #Parse Command Line Args
     SENTINEL = object()
     parser = argparse.ArgumentParser(add_help=False)
@@ -259,6 +272,7 @@ def loadcmd():
     parser.add_argument('-b','--application_bundle', default=SENTINEL, metavar='JDK|JRE|ANY|*', help='Java Application Bundle Types')
     parser.add_argument('-x','--resolver', default=SENTINEL, metavar='\'SYMLINK|COMMAND|NONE\'', help="Resolve the actual path of the javac executeable! Examples: -x 'SYMLINK|COMMAND', -x '*'")
     parser.add_argument('-c','--config', dest='config_load', action='store_true', default=SENTINEL, help='Configuration Values Are Used If the CLI Has not overridden them!')
+    parser.add_argument('-g','--gen_override', dest='config_load', action='store_true', default=SENTINEL, help='Configuration Gen Gets Overriden by Command Line Flags!')
     parser.add_argument('--help', action='help', help='Show this help message and exit')
 
     args = parser.parse_args()
@@ -288,7 +302,7 @@ def parse():
     if not target:
         target = '1.8.' #TODO: change to 8-6 when range support is allowed
     if not search:
-        search = 'PATH|CUSTOM|INSTALLS'
+        search = dsrch
     if not intensity:
         intensity = 'NORMAL'
     if not application_bundle:
@@ -335,6 +349,7 @@ if __name__ == "__main__":
     if not loadcmd():
         load_cfg()
     parse()
+    print(tasks)
 
     #Main Method Program call depending upon recurse flag
     if recurse:
