@@ -213,11 +213,12 @@ def load_cfg():
     config = configparser.ConfigParser()
     config.add_section('main')
     sflags = ['target', 'search', 'intensity', 'paths', 'application_bundle', 'resolver']
-    bflags = ['recurse', 'quick', 'update', 'clean_cache', 'srch_all']
+    bflags = ['recurse', 'quick', 'update', 'clean_cache']
     for f in sflags:
         config.set('main', f, str(globals()[f]))
     for f in bflags:
         config.set('main', f, str(globals()[f]))
+    config.set('main', 'all', str(srch_all))
     #Parse Config and Values into memory
     config.read(cfgpath)
     for f in sflags:
@@ -226,6 +227,7 @@ def load_cfg():
     for f in bflags:
         if not f in flags:
             globals()[f] = config.get('main', f)[:1].lower() == 't'
+    srch_all = config.get('main', 'all')[:1].lower() == 't'
 
     #Save Config
     with open(cfgpath, 'w') as configfile:
@@ -328,6 +330,9 @@ if __name__ == "__main__":
     if not loadcmd():
         load_cfg()
     parse()
+
+    print(srch_all)
+    sys.exit(0)
 
     #Main Method Program call depending upon recurse flag
     if recurse:
