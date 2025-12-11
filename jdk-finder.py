@@ -77,8 +77,11 @@ exes = ("java" + exe, "javac" + exe)
 def find_jdks_recurse():
     start = time.time()
     if isWindows:
-        print('TODO:')#//TODO:
-    if isMac:
+        root_dir = os.path.realpath('\\')
+        for p in os.listdir(root_dir):
+            if p == 'Program Files' or (p.startswith('Program Files (') and p.endswith(')')):
+                findjavas(os.path.join(root_dir, p))
+    elif isMac:
         print('TODO:')#//TODO:
     else:
         findjavas('/usr/lib/jvm')
