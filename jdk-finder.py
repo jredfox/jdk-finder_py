@@ -13,7 +13,6 @@ import subprocess
 ###################
 ###################
 # TODONOW:
-# - re-check config
 # - recurse method may need to be optimized?????
 # - cli api look into --recurse_PATH & --recurse_paths
 # - make macOS work
