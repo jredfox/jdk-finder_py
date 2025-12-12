@@ -15,6 +15,9 @@ import subprocess
 # TODONOW:
 # - unix recurse test to see if applying the same folder duplicates results
 # - discord
+# - config should override CLI options by default unless --config_blacklist='*' or --config_blacklist='-myflag' is specified.
+# - config should let CLI override it's gen by default unless --config_defaults or -d is specified
+# - allow --config_file as an argument so multiple processes can use the same script location with different configurations
 # - make macOS work
 # - make windows work
 #
@@ -25,6 +28,8 @@ import subprocess
 # - When JDK < Target and -u or 0 args update cache A-SYNC (-u get enabled by default inside the config when generating)
 # - Add Small JDK Install search for Windows Official Oracle & Adoptium only!
 # - Re-Implement jdk-finder.py V1 checks into the program so it actually works
+# - Add Path '/usr/local/java/*/Contents/Home/bin',
+# - Add Path '/opt/java/*/Contents/Home/bin'
 #
 # NOTES:
 # -If you plan to run this program multiple times for one process please reset all the global variables back to their defaults first
