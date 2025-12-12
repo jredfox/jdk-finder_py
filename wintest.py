@@ -68,7 +68,7 @@ def realpathw(path):
                 result = buffer.value
                 if i == 0:
                     colon = result.find(':')
-                    if colon > 1:  # Ensure there's a char before
+                    if colon > 0:  # Ensure there's a char before
                         return result[(colon - 1):]
                 return result
         return path
