@@ -69,6 +69,7 @@ def realpathw(path):
                 if result.startswith(u'\\\\?\\'):
                     result = result[4:]  # Strip extended-length path prefix if present
                 return result
+        return path
     except Exception:
         return path
     finally:
