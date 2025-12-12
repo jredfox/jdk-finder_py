@@ -1,0 +1,80 @@
+import os
+import time
+import sys
+if sys.version_info[0] >= 3:
+    unicode = str
+from ctypes import windll, wintypes, create_unicode_buffer, WinError
+
+kernel32 = windll.kernel32
+
+INVALID_HANDLE_VALUE = -1
+
+FILE_READ_ATTRIBUTES = 0x80
+FILE_SHARE_ALL = 0x1 | 0x2 | 0x4  # FILE_SHARE_READ | FILE_SHARE_WRITE | FILE_SHARE_DELETE
+OPEN_EXISTING = 3
+FILE_FLAG_BACKUP_SEMANTICS = 0x02000000
+
+def realpathw_old(path):
+    path = os.path.abspath(unicode(path))  # Ensure absolute and unicode for Windows API
+    hFile = kernel32.CreateFileW(
+        path,
+        FILE_READ_ATTRIBUTES,
+        FILE_SHARE_ALL,
+        None,
+        OPEN_EXISTING,
+        FILE_FLAG_BACKUP_SEMANTICS,
+        None
+    )
+    if hFile == INVALID_HANDLE_VALUE:
+        raise WinError()
+    try:
+        sizes = [260, 32768]  # Initial, then max extended path
+        for i, buf_size in enumerate(sizes):
+            buffer = create_unicode_buffer(buf_size)
+            ret = kernel32.GetFinalPathNameByHandleW(hFile, buffer, buf_size, 0)  # 0 = VOLUME_NAME_DOS
+            if i > 0 and ret == 0:
+                raise WinError()
+            if ret < buf_size:
+                result = buffer.value
+                if result.startswith(u'\\\\?\\'):
+                    result = result[4:]  # Strip extended-length path prefix if present
+                return result
+    finally:
+        kernel32.CloseHandle(hFile)
+
+def realpathw(path):
+    path = os.path.abspath(path)  # Ensure absolute and unicode for Windows API
+    if not os.path.exists(path):
+        return path
+    hFile = kernel32.CreateFileW(
+        unicode(path),
+        FILE_READ_ATTRIBUTES,
+        FILE_SHARE_ALL,
+        None,
+        OPEN_EXISTING,
+        FILE_FLAG_BACKUP_SEMANTICS,
+        None
+    )
+    if hFile == INVALID_HANDLE_VALUE:
+        return path
+    try:
+        sizes = [260, 32768]  # Initial, then max extended path
+        for i, buf_size in enumerate(sizes):
+            buffer = create_unicode_buffer(buf_size)
+            ret = kernel32.GetFinalPathNameByHandleW(hFile, buffer, buf_size, 0)  # 0 = VOLUME_NAME_DOS
+            if i > 0 and ret == 0:
+                return path
+            if ret < buf_size:
+                result = buffer.value
+                if result.startswith(u'\\\\?\\'):
+                    result = result[4:]  # Strip extended-length path prefix if present
+                return result
+    except Exception:
+        return path
+    finally:
+        kernel32.CloseHandle(hFile)
+
+start = time.time()
+print(os.path.realpath(r"C:\Users\jredfox\Desktop\test\infloop\infloop\..\dir-link-c"))
+print(realpathw( r"C:\Users\jredfox\Desktop\test\infloop\infloop\..\dir-link-c"))
+print('end ' + str(time.time() - start))
