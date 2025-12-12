@@ -13,8 +13,6 @@ import subprocess
 ###################
 ###################
 # TODONOW:
-# - unix recurse test to see if applying the same folder duplicates results
-# - discord
 # - config should override CLI options by default unless --config_blacklist='*' or --config_blacklist='-myflag' is specified.
 # - config should let CLI override it's gen by default unless --config_defaults or -d is specified
 # - allow --config_file as an argument so multiple processes can use the same script location with different configurations
