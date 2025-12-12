@@ -16,7 +16,7 @@ if isWindows:
     FILE_FLAG_BACKUP_SEMANTICS = 0x02000000
 
 def realpathw(path):
-    path = os.path.abspath(path)  # Ensure absolute and unicode for Windows API
+    path = os.path.abspath(path)
     if not os.path.exists(path):
         return path
     hFile = kernel32.CreateFileW(
@@ -31,7 +31,7 @@ def realpathw(path):
     if hFile == INVALID_HANDLE_VALUE:
         return path
     try:
-        sizes = [260, 32768]  # Initial, then max extended path
+        sizes = [260, 32768]
         for i, buf_size in enumerate(sizes):
             buffer = create_unicode_buffer(buf_size)
             ret = kernel32.GetFinalPathNameByHandleW(hFile, buffer, buf_size, 0)  # 0 = VOLUME_NAME_DOS
@@ -41,7 +41,7 @@ def realpathw(path):
                 result = buffer.value
                 if i == 0:
                     colon = result.find(':')
-                    if colon > 0:  # Ensure there's a char before
+                    if colon > 0:
                         return result[(colon - 1):]
                 return result
         return path
