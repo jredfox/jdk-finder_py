@@ -15,9 +15,11 @@ OPEN_EXISTING = 3
 FILE_FLAG_BACKUP_SEMANTICS = 0x02000000
 
 def realpathw_old(path):
-    path = os.path.abspath(unicode(path))  # Ensure absolute and unicode for Windows API
+    path = os.path.abspath(path)  # Ensure absolute and unicode for Windows API
+    if not os.path.exists(path):
+        return path
     hFile = kernel32.CreateFileW(
-        path,
+        unicode(path),
         FILE_READ_ATTRIBUTES,
         FILE_SHARE_ALL,
         None,
@@ -26,19 +28,21 @@ def realpathw_old(path):
         None
     )
     if hFile == INVALID_HANDLE_VALUE:
-        raise WinError()
+        return path
     try:
         sizes = [260, 32768]  # Initial, then max extended path
         for i, buf_size in enumerate(sizes):
             buffer = create_unicode_buffer(buf_size)
             ret = kernel32.GetFinalPathNameByHandleW(hFile, buffer, buf_size, 0)  # 0 = VOLUME_NAME_DOS
             if i > 0 and ret == 0:
-                raise WinError()
+                return path
             if ret < buf_size:
                 result = buffer.value
                 if result.startswith(u'\\\\?\\'):
                     result = result[4:]  # Strip extended-length path prefix if present
                 return result
+    except Exception:
+        return path
     finally:
         kernel32.CloseHandle(hFile)
 
