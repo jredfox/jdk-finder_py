@@ -322,10 +322,16 @@ def loadcmd():
 
     return (not config_load)
 
+#Python does not handle windows symlinks or junctions until 3.8.0 which can lead to many issues
+def canSym():
+    version = sys.version_info
+    return not isWindows or (version.major > 3 or (version.major == 3 and version.minor >= 8))
+
 def parse():
     #Define globals to edit
-    global target, search, intensity, application_bundle, resolver, tasks, bundle_JDK, bundle_JRE, rsymlinks, rcmd, has_resolver, custom_paths
+    global recurse, target, search, intensity, application_bundle, resolver, tasks, bundle_JDK, bundle_JRE, rsymlinks, rcmd, has_resolver, custom_paths
     #Sanity Checks
+    recurse = recurse and canSym() #TODO: when implementing per task recursion check for canSym() before recursing
     target = target.strip()
     search = search.replace(' ', '').upper()
     intensity = intensity.replace(' ', '').upper()
