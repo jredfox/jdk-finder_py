@@ -66,8 +66,10 @@ def realpathw(path):
                 return path
             if ret < buf_size:
                 result = buffer.value
-                if result.startswith(u'\\\\?\\'):
-                    result = result[4:]  # Strip extended-length path prefix if present
+                if i == 0:
+                    colon = result.find(':')
+                    if colon > 0:  # Ensure there's a char before
+                        return result[(colon - 1):]
                 return result
         return path
     except Exception:
