@@ -10,6 +10,7 @@ if isWindows:
     from ctypes import windll, wintypes, create_unicode_buffer
     kernel32 = windll.kernel32
     INVALID_HANDLE_VALUE = -1
+    FILE_READ_EA = 8
     FILE_READ_ATTRIBUTES = 0x80
     FILE_SHARE_ALL = 0x1 | 0x2 | 0x4  # FILE_SHARE_READ | FILE_SHARE_WRITE | FILE_SHARE_DELETE
     OPEN_EXISTING = 3
@@ -21,7 +22,7 @@ def realpathw(path):
         return path
     hFile = kernel32.CreateFileW(
         unicode(path),
-        FILE_READ_ATTRIBUTES,
+        FILE_READ_EA | FILE_READ_ATTRIBUTES,
         FILE_SHARE_ALL,
         None,
         OPEN_EXISTING,
