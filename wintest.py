@@ -68,7 +68,7 @@ def realpathw(path):
                 result = buffer.value
                 if i == 0:
                     colon = result.find(':')
-                    if colon > 0:  # Ensure there's a char before
+                    if colon > 1:  # Ensure there's a char before
                         return result[(colon - 1):]
                 return result
         return path
@@ -80,4 +80,5 @@ def realpathw(path):
 start = time.time()
 print(os.path.realpath(r"C:\Users\jredfox\Desktop\test\infloop\infloop\..\dir-link-c"))
 print(realpathw( r"C:\Users\jredfox\Desktop\test\infloop\infloop\..\dir-link-c"))
+print(realpathw(r'\\?\Volume{263eee56-b1c8-408e-991a-8f0b5dae1e4b}\Users\jredfox\Desktop\test'))
 print('end ' + str(time.time() - start))
