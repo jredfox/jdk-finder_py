@@ -1,18 +1,19 @@
 import os
 import time
 import sys
-if sys.version_info[0] >= 3:
-    unicode = str
-from ctypes import windll, wintypes, create_unicode_buffer, WinError
 
-kernel32 = windll.kernel32
+isWindows = True
 
-INVALID_HANDLE_VALUE = -1
-
-FILE_READ_ATTRIBUTES = 0x80
-FILE_SHARE_ALL = 0x1 | 0x2 | 0x4  # FILE_SHARE_READ | FILE_SHARE_WRITE | FILE_SHARE_DELETE
-OPEN_EXISTING = 3
-FILE_FLAG_BACKUP_SEMANTICS = 0x02000000
+if isWindows:
+    if sys.version_info[0] >= 3:
+        unicode = str
+    from ctypes import windll, wintypes, create_unicode_buffer
+    kernel32 = windll.kernel32
+    INVALID_HANDLE_VALUE = -1
+    FILE_READ_ATTRIBUTES = 0x80
+    FILE_SHARE_ALL = 0x1 | 0x2 | 0x4  # FILE_SHARE_READ | FILE_SHARE_WRITE | FILE_SHARE_DELETE
+    OPEN_EXISTING = 3
+    FILE_FLAG_BACKUP_SEMANTICS = 0x02000000
 
 def realpathw(path):
     path = os.path.abspath(path)  # Ensure absolute and unicode for Windows API
