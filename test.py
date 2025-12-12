@@ -35,5 +35,8 @@ def findjavasu(d):
 
 if __name__ == "__main__":
     findjavasu('/home/jredfox/Desktop/test')
+    findjavasu('/home/jredfox/Desktop/test')
+    findjavasu('/home/jredfox/Desktop/test')
+    findjavasu('/home/jredfox/Desktop/test/test/test')
     print(os.path.isdir('/home/jredfox/Desktop/test/test/test/dir-link-b'))
     print(javas)
