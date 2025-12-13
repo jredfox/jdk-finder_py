@@ -10,7 +10,6 @@ if isWindows:
         r'(\\\\|\\)[\?\.]{1,2}\\UNC' + "\\\\",
         re.IGNORECASE
     )
-    is32bits = sys.maxsize <= 2**32
     if sys.version_info[0] >= 3:
         unicode = str
     from ctypes import windll, wintypes, create_unicode_buffer, c_void_p, byref
@@ -21,6 +20,7 @@ if isWindows:
     FILE_SHARE_ALL = 0x1 | 0x2 | 0x4  # FILE_SHARE_READ | FILE_SHARE_WRITE | FILE_SHARE_DELETE
     OPEN_EXISTING = 3
     FILE_FLAG_BACKUP_SEMANTICS = 0x02000000
+    #is32bits = sys.maxsize <= 2**32
 
     class NoWOW64:
         _disable = kernel32.Wow64DisableWow64FsRedirection
@@ -100,8 +100,7 @@ start = time.time()
 
 #Correct WOW64 BS given a path
 def expandEnvW(p):
-    a = True
-    if is32bits or a:
+    if isWindows:
         l = p.lower()
         if l.startswith('@programfiles@'):
             return os.path.join(os.path.realpath('\\'), 'Program Files') + p[14:]
@@ -110,4 +109,4 @@ def expandEnvW(p):
     return p
         
 with NoWOW64():
-    print(expandEnvW('@PROGRAMFILES@'))
+    print(expandEnvW('@commonprogramfiles@/my log.txt'))
