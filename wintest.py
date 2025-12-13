@@ -1,10 +1,15 @@
 import os
 import time
 import sys
+import re
 
 isWindows = True
 
 if isWindows:
+    UNC_REGEX = re.compile(
+        r'(\\\\|\\)[\?\.]{1,2}\\UNC',
+        re.IGNORECASE
+    )
     is32bits = sys.maxsize <= 2**32
     if sys.version_info[0] >= 3:
         unicode = str
@@ -60,6 +65,9 @@ def realpathw(path):
             if ret < buf_size:
                 result = buffer.value
                 if i == 0:
+                    if UNC_REGEX.match(result):
+                        iunc = result.find('UNC')
+                        return '\\\\' + result[iunc+4:]
                     colon = result.find(':')
                     if colon > 0:
                         return result[(colon - 1):]
@@ -90,12 +98,13 @@ def findjavasw(d):
 
 start = time.time()
 
+#!ENV! --> %ENV% --> $ENV$ --> $ENV$ before the ("/" "\") or whole string if no slash.
 def expandEnv(d):
     if is32bits:
         d = d.replace('!', '%').replace('CommonProgramFiles', 'CommonProgramW6432').replace('ProgramFiles', 'ProgramW6432')
     else:
         d = d.replace('!', '%')
-    return os.path.expandvars(d)
+    return d
         
 with NoWOW64():
     print('32-bit:' + str(is32bits))
@@ -103,4 +112,4 @@ with NoWOW64():
     print(realpathw(r'\\?\Volume{263eee56-b1c8-408e-991a-8f0b5dae1e4b}\Users\jredfox\Desktop\test'))
     print(realpathw(r'C:\Program Files'))
     print(realpathw(r'C:\Windows\System32'))
-    print(expandEnv('!PROGRAMFILES!'))
+    print(realpathw('%PROGRAMFILES%'))
