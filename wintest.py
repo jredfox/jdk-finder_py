@@ -98,16 +98,15 @@ def findjavasw(d):
 
 start = time.time()
 
-#!ENV! --> %ENV% --> $ENV$ --> $ENV$ before the ("/" "\") or whole string if no slash.
-def expandEnv(d):
-    if is32bits:
-        if d.startswith('%') or d.startswith('!'):
-            d = d.replace('!', '%', 2)
-            c = os.path.expandvars('%CommonProgramW6432%')
-            p = os.path.expandvars('%ProgramW6432%')
-    else:
-        d = d.replace('!', '%')
-    return d
+#Correct WOW64 BS
+#TODO: check 
+def expandEnv(p):
+    p = p.strip().strip('"')
+    if p.startswith('%programfiles%') or p.startswith('!programfiles!'):
+        return os.path.join(os.path.join(os.path.realpath('\\'), 'Program Files'), p[len('%programfiles%'):])
+    elif p.startswith('%commonprogramfiles%') or p.startswith('!commonprogramfiles!'):
+        return os.path.join(os.path.join(os.path.realpath('\\'), 'Program Files\\Common Files'), p[len('%commonprogramfiles%'):])
+    return p
         
 with NoWOW64():
     expandEnv('')
