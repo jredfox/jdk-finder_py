@@ -91,7 +91,10 @@ def findjavasw(d):
 start = time.time()
 
 def expandEnv(d):
-    d = d.replace('!', '%').replace('CommonProgramFiles', 'CommonProgramW6432').replace('ProgramFiles', 'ProgramW6432')
+    if is32bits:
+        d = d.replace('!', '%').replace('CommonProgramFiles', 'CommonProgramW6432').replace('ProgramFiles', 'ProgramW6432')
+    else:
+        d = d.replace('!', '%')
     return os.path.expandvars(d)
         
 with NoWOW64():
