@@ -41,7 +41,7 @@ else:
             pass
 
 def realpathw(path):
-    path = os.path.abspath(path)
+    path = os.path.abspath(path).replace('/', '\\')
     if not os.path.exists(path):
         return path
     hFile = kernel32.CreateFileW(
@@ -65,7 +65,7 @@ def realpathw(path):
             if ret < buf_size:
                 result = buffer.value
                 result = result.replace('/', '\\')
-                if not result == '\\' and result.endswith('\\'):
+                if not result == '\\' and not result.endswith(':\\') and result.endswith('\\'):
                     result = result[:-1]
                 if i == 0:
                     if UNC_REGEX.match(result):
@@ -112,4 +112,5 @@ def expandEnvW(p):
     return p
         
 with NoWOW64():
+    print(realpathw('C:/a/'))
     print(expandEnvW('@commonprogramfiles@/my log.txt'))
