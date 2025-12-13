@@ -7,7 +7,7 @@ isWindows = True
 
 if isWindows:
     UNC_REGEX = re.compile(
-        r'(\\\\|\\)[\?\.]{1,2}\\UNC',
+        r'(\\\\|\\)[\?\.]{1,2}\\UNC' + "\\\\",
         re.IGNORECASE
     )
     is32bits = sys.maxsize <= 2**32
@@ -101,12 +101,16 @@ start = time.time()
 #!ENV! --> %ENV% --> $ENV$ --> $ENV$ before the ("/" "\") or whole string if no slash.
 def expandEnv(d):
     if is32bits:
-        d = d.replace('!', '%').replace('CommonProgramFiles', 'CommonProgramW6432').replace('ProgramFiles', 'ProgramW6432')
+        if d.startswith('%') or d.startswith('!'):
+            d = d.replace('!', '%', 2)
+            c = os.path.expandvars('%CommonProgramW6432%')
+            p = os.path.expandvars('%ProgramW6432%')
     else:
         d = d.replace('!', '%')
     return d
         
 with NoWOW64():
+    expandEnv('')
     print('32-bit:' + str(is32bits))
     print(realpathw( r"C:\Users\jredfox\Desktop\test\infloop\infloop\..\dir-link-c"))
     print(realpathw(r'\\?\Volume{263eee56-b1c8-408e-991a-8f0b5dae1e4b}\Users\jredfox\Desktop\test'))
