@@ -99,13 +99,13 @@ def findjavasw(d):
 start = time.time()
 
 #Correct WOW64 BS
-#TODO: check 
-def expandEnv(p):
-    p = p.strip().strip('"')
-    if p.startswith('%programfiles%') or p.startswith('!programfiles!'):
-        return os.path.join(os.path.join(os.path.realpath('\\'), 'Program Files'), p[len('%programfiles%'):])
-    elif p.startswith('%commonprogramfiles%') or p.startswith('!commonprogramfiles!'):
-        return os.path.join(os.path.join(os.path.realpath('\\'), 'Program Files\\Common Files'), p[len('%commonprogramfiles%'):])
+def expandEnvW(p):
+    if is32bits:
+        l = p.lower().replace('%', '!')
+        if l.startswith('!programfiles!'):
+            return os.path.join(os.path.realpath('\\'), 'Program Files') + p[14:]
+        elif l.startswith('!commonprogramfiles!'):
+            return os.path.join(os.path.realpath('\\'), 'Program Files\\Common Files') + p[20:]
     return p
         
 with NoWOW64():
