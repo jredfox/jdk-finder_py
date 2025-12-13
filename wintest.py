@@ -52,7 +52,7 @@ def realpathw(path):
         None
     )
     if hFile == INVALID_HANDLE_VALUE:
-        return path
+        return os.path.realpath(path)
     try:
         sizes = [248, 32768]
         for i, buf_size in enumerate(sizes):
@@ -70,9 +70,9 @@ def realpathw(path):
                     if colon > 0:
                         return result[(colon - 1):]
                 return result
-        return path
+        return os.path.realpath(path)
     except Exception:
-        return path
+        return os.path.realpath(path)
     finally:
         kernel32.CloseHandle(hFile)
 
@@ -107,6 +107,7 @@ def expandEnvW(p):
     return p
         
 with NoWOW64():
+    print(realpathw('\\Users\\j'))
     print(realpathw(r'Desktop\test\infloop\infloop\infloop'))
     print(realpathw( r"C:\Users\jredfox\Desktop\test\infloop\infloop\..\dir-link-c"))
     print(realpathw(r'\\?\Volume{263eee56-b1c8-408e-991a-8f0b5dae1e4b}\Users\jredfox\Desktop\test'))
