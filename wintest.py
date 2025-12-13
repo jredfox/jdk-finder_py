@@ -5,7 +5,7 @@ import sys
 isWindows = True
 
 if isWindows:
-    is64bits = sys.maxsize > 2**32
+    is32bits = sys.maxsize <= 2**32
     if sys.version_info[0] >= 3:
         unicode = str
     from ctypes import windll, wintypes, create_unicode_buffer, c_void_p, byref
@@ -90,7 +90,7 @@ def findjavasw(d):
 
 start = time.time()
 with NoWOW64():
-    print('64-bit:' + str(is64bits))
+    print('32-bit:' + str(is32bits))
     print(realpathw( r"C:\Users\jredfox\Desktop\test\infloop\infloop\..\dir-link-c"))
     print(realpathw(r'\\?\Volume{263eee56-b1c8-408e-991a-8f0b5dae1e4b}\Users\jredfox\Desktop\test'))
     print(realpathw(r'C:\Program Files'))
