@@ -98,22 +98,16 @@ def findjavasw(d):
 
 start = time.time()
 
-#Correct WOW64 BS
+#Correct WOW64 BS given a path
 def expandEnvW(p):
-    if is32bits:
-        l = p.lower().replace('%', '!')
-        if l.startswith('!programfiles!'):
+    a = True
+    if is32bits or a:
+        l = p.lower()
+        if l.startswith('@programfiles@'):
             return os.path.join(os.path.realpath('\\'), 'Program Files') + p[14:]
-        elif l.startswith('!commonprogramfiles!'):
+        elif l.startswith('@commonprogramfiles@'):
             return os.path.join(os.path.realpath('\\'), 'Program Files\\Common Files') + p[20:]
     return p
         
 with NoWOW64():
-    expandEnv('')
-    print('32-bit:' + str(is32bits))
-    print(realpathw( r"C:\Users\jredfox\Desktop\test\infloop\infloop\..\dir-link-c"))
-    print(realpathw(r'\\?\Volume{263eee56-b1c8-408e-991a-8f0b5dae1e4b}\Users\jredfox\Desktop\test'))
-    print(realpathw(r'C:\Program Files'))
-    print(realpathw(r'C:\Windows\System32'))
-    print(realpathw('%PROGRAMFILES%'))
-    print(realpathw(r'\\?\UNC\localhost\C$'))
+    print(expandEnvW('@PROGRAMFILES@'))
