@@ -18,6 +18,7 @@ import subprocess
 # - allow --config_file as an argument so multiple processes can use the same script location with different configurations
 # - make macOS work
 # - make windows work
+# - make finish adding env WOW64 BS to replacing stuff in the PATH / CUSTOM_PATH using case insensitive replace to the PATH and CUSOTOM_PATH
 #
 # TODO:
 # - add -R --search_recurse which allows you to specify which searches are allowed to use recursion

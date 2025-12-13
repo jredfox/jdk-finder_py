@@ -89,11 +89,15 @@ def findjavasw(d):
             javas.append(real)
 
 start = time.time()
+
+def expandEnv(d):
+    d = d.replace('!', '%').replace('CommonProgramFiles', 'CommonProgramW6432').replace('ProgramFiles', 'ProgramW6432')
+    return os.path.expandvars(d)
+        
 with NoWOW64():
     print('32-bit:' + str(is32bits))
     print(realpathw( r"C:\Users\jredfox\Desktop\test\infloop\infloop\..\dir-link-c"))
     print(realpathw(r'\\?\Volume{263eee56-b1c8-408e-991a-8f0b5dae1e4b}\Users\jredfox\Desktop\test'))
     print(realpathw(r'C:\Program Files'))
     print(realpathw(r'C:\Windows\System32'))
-    print(os.path.expandvars('%PROGRAMFILES%'))
-    print(os.path.expandvars(sys.argv[1]))
+    print(expandEnv('!PROGRAMFILES!'))
