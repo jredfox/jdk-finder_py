@@ -41,9 +41,7 @@ else:
             pass
 
 def realpathw(path):
-    path = os.path.abspath(path).replace('/', '\\')
-    if not os.path.exists(path):
-        return path
+    path = path.replace('/', '\\')
     hFile = kernel32.CreateFileW(
         unicode(path),
         FILE_READ_EA | FILE_READ_ATTRIBUTES,
@@ -64,9 +62,6 @@ def realpathw(path):
                 return path
             if ret < buf_size:
                 result = buffer.value
-                result = result.replace('/', '\\')
-                if not result == '\\' and not result.endswith(':\\') and result.endswith('\\'):
-                    result = result[:-1]
                 if i == 0:
                     if UNC_REGEX.match(result):
                         iunc = result.find('UNC')
@@ -112,5 +107,8 @@ def expandEnvW(p):
     return p
         
 with NoWOW64():
-    print(realpathw('C:/a/'))
-    print(expandEnvW('@commonprogramfiles@/my log.txt'))
+    print(realpathw(r'Desktop\test\infloop\infloop\infloop'))
+    print(realpathw( r"C:\Users\jredfox\Desktop\test\infloop\infloop\..\dir-link-c"))
+    print(realpathw(r'\\?\Volume{263eee56-b1c8-408e-991a-8f0b5dae1e4b}\Users\jredfox\Desktop\test'))
+    print(realpathw(r'C:\Program Files'))
+    print(realpathw(r'C:\Windows\System32'))
