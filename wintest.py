@@ -64,6 +64,9 @@ def realpathw(path):
                 return path
             if ret < buf_size:
                 result = buffer.value
+                result = result.replace('/', '\\')
+                if not result == '\\' and result.endswith('\\'):
+                    result = result[:-1]
                 if i == 0:
                     if UNC_REGEX.match(result):
                         iunc = result.find('UNC')
