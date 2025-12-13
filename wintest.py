@@ -56,7 +56,7 @@ def realpathw(path):
     if hFile == INVALID_HANDLE_VALUE:
         return path
     try:
-        sizes = [260, 32768]
+        sizes = [248, 32768]
         for i, buf_size in enumerate(sizes):
             buffer = create_unicode_buffer(buf_size)
             ret = kernel32.GetFinalPathNameByHandleW(hFile, buffer, buf_size, 0)  # 0 = VOLUME_NAME_DOS
@@ -113,3 +113,4 @@ with NoWOW64():
     print(realpathw(r'C:\Program Files'))
     print(realpathw(r'C:\Windows\System32'))
     print(realpathw('%PROGRAMFILES%'))
+    print(realpathw(r'\\?\UNC\localhost\C$'))
