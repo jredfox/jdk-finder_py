@@ -49,6 +49,7 @@ VOLUME_WIN_REGEX = re.compile(
     r'(\\\\|\\)[\?\.]{1,2}\\Volume\{[0-9a-f\-]+\}\\Windows(?:\\|$)',
     re.IGNORECASE
 )
+root_dir = (os.getenv("SystemDrive")[0] + ":\\") if isWindows else '/'
 
 dsrch = 'PATH|CUSTOM|INSTALLS'
 #Flags
@@ -85,7 +86,6 @@ exes = ("java" + exe, "javac" + exe)
 def find_jdks_recurse():
     start = time.time()
     if isWindows:
-        root_dir = os.path.realpath('\\')
         programs = os.path.join(root_dir, 'Program Files')
         findjavas(os.path.join(programs, "Java"))
         findjavas(programs)
