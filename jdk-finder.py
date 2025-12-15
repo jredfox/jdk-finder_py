@@ -49,7 +49,7 @@ VOLUME_WIN_REGEX = re.compile(
     r'(\\\\|\\)[\?\.]{1,2}\\Volume\{[0-9a-f\-]+\}\\Windows(?:\\|$)',
     re.IGNORECASE
 )
-root_dir = (os.getenv("SystemDrive")[0] + ":\\") if isWindows else '/'
+root_dir = (os.getenv("ProgramFiles")[0] + ":\\") if isWindows else '/'
 
 dsrch = 'PATH|CUSTOM|INSTALLS'
 #Flags
