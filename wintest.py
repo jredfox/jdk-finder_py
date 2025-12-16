@@ -11,7 +11,7 @@ if isWindows:
         re.IGNORECASE
     )
     VOLUME_REGEX = re.compile(
-        r'(\\\\|\\)[\?\.]{1,2}\\Volume\{[0-9a-f\-]+\}' + "\\\\",
+        r'(\\\\|\\)[\?\.]{1,2}\\Volume\{[0-9a-f\-]+\}(?:\\|$)',
         re.IGNORECASE
     )
     if sys.version_info[0] >= 3:
@@ -127,7 +127,7 @@ My Optimzied method:
 """
         
 with NoWOW64():
-    print(realpathw(r'\\?\Volume{300f19ef-1253-495e-90a5-2f04ac7deed0}' + "\\"))
+    print(realpathw(r'\\?\Volume{300f19ef-1253-495e-90a5-2f04ac7deed0}' + ""))
     #print(realpathw(r'C:Documents'))
     #print(realpathw(r'C:\Users\jredfox\Desktop\test\dir\Desktop_B\NBTExplorer-2.8.0\..'))
     #print(realpathw(r'C:\Users\jredfox\Desktop\test\dir-link-c\Desktop_B\..\Documents'))
