@@ -64,9 +64,7 @@ def realpathw(path):
         for i, buf_size in enumerate(sizes):
             buffer = create_unicode_buffer(buf_size)
             ret = kernel32.GetFinalPathNameByHandleW(hFile, buffer, buf_size, FLAG_VOL_NAME)  # 0 = VOLUME_NAME_DOS
-            if i > 0 and ret == 0:
-                return path
-            if ret < buf_size:
+            if ret < buf_size and ret != 0:
                 result = buffer.value
                 if i == 0:
                     if UNC_REGEX.match(result):
@@ -127,7 +125,7 @@ My Optimzied method:
 """
         
 with NoWOW64():
-    print(realpathw(r'\\?\Volume{300f19ef-1253-495e-90a5-2f04ac7deed0}' + ""))
+    print(realpathw(r'\\?\Volume{300f19ef-1253-495e-90a5-2f04ac7deed0}' + "\\"))
     #print(realpathw(r'C:Documents'))
     #print(realpathw(r'C:\Users\jredfox\Desktop\test\dir\Desktop_B\NBTExplorer-2.8.0\..'))
     #print(realpathw(r'C:\Users\jredfox\Desktop\test\dir-link-c\Desktop_B\..\Documents'))
