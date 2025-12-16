@@ -10,6 +10,10 @@ if isWindows:
         r'(\\\\|\\)[\?\.]{1,2}\\UNC' + "\\\\",
         re.IGNORECASE
     )
+    VOLUME_REGEX = re.compile(
+        r'(\\\\|\\)[\?\.]{1,2}\\Volume\{[0-9a-f\-]+\}' + "\\\\",
+        re.IGNORECASE
+    )
     if sys.version_info[0] >= 3:
         unicode = str
     from ctypes import windll, wintypes, create_unicode_buffer, c_void_p, byref
@@ -20,6 +24,7 @@ if isWindows:
     FILE_SHARE_ALL = 0x1 | 0x2 | 0x4  # FILE_SHARE_READ | FILE_SHARE_WRITE | FILE_SHARE_DELETE
     OPEN_EXISTING = 3
     FILE_FLAG_BACKUP_SEMANTICS = 0x02000000
+    VOLUME_NAME_GUID = 0x1
     #is32bits = sys.maxsize <= 2**32
 
     class NoWOW64:
@@ -41,7 +46,8 @@ else:
             pass
 
 def realpathw(path):
-    path = path.replace('/', '\\')
+    FLAG_VOL_NAME = VOLUME_NAME_GUID if VOLUME_REGEX.match(path) else 0
+    path = os.path.realpath(path)
     hFile = kernel32.CreateFileW(
         unicode(path),
         FILE_READ_EA | FILE_READ_ATTRIBUTES,
@@ -52,12 +58,12 @@ def realpathw(path):
         None
     )
     if hFile == INVALID_HANDLE_VALUE:
-        return os.path.realpath(path)
+        return path
     try:
         sizes = [248, 32768]
         for i, buf_size in enumerate(sizes):
             buffer = create_unicode_buffer(buf_size)
-            ret = kernel32.GetFinalPathNameByHandleW(hFile, buffer, buf_size, 0)  # 0 = VOLUME_NAME_DOS
+            ret = kernel32.GetFinalPathNameByHandleW(hFile, buffer, buf_size, FLAG_VOL_NAME)  # 0 = VOLUME_NAME_DOS
             if i > 0 and ret == 0:
                 return path
             if ret < buf_size:
@@ -70,9 +76,9 @@ def realpathw(path):
                     if colon > 0:
                         return result[(colon - 1):]
                 return result
-        return os.path.realpath(path)
+        return path
     except Exception:
-        return os.path.realpath(path)
+        return path
     finally:
         kernel32.CloseHandle(hFile)
 
@@ -105,11 +111,24 @@ def expandEnvW(p):
         elif l.startswith('@commonprogramfiles@'):
             return os.path.join(os.path.realpath('\\'), 'Program Files\\Common Files') + p[20:]
     return p
+
+"""
+Windows Operrations:
+- Convert all "/" to "\" and collapse "\\" to "\". Also Removing trailing "\" but treating it as a directory if not throw error
+- Fallow "." as the current dir and ".." as the parent dir according to the actual string logic not the symbolic link target
+- Expand Env Variables. %VAR% / $VAR on windows and "~" as user "~/path" as relative path from the user "~<username>/" specific to a different user "$VAR" for variable
+- Resolve all symlinks final path from left to right
+"""
+
+"""
+My Optimzied method:
+- normpathw
+- Call GetFinalPathNameByHandleW if it doesn't exist start the opperation from right to left of the path until the absolute path of the resolved parrent can be found and then use that
+"""
         
 with NoWOW64():
-    print(realpathw('\\Users\\j'))
-    print(realpathw(r'Desktop\test\infloop\infloop\infloop'))
-    print(realpathw( r"C:\Users\jredfox\Desktop\test\infloop\infloop\..\dir-link-c"))
-    print(realpathw(r'\\?\Volume{263eee56-b1c8-408e-991a-8f0b5dae1e4b}\Users\jredfox\Desktop\test'))
-    print(realpathw(r'C:\Program Files'))
-    print(realpathw(r'C:\Windows\System32'))
+    print(realpathw(r'\\?\Volume{300f19ef-1253-495e-90a5-2f04ac7deed0}' + "\\"))
+    #print(realpathw(r'C:Documents'))
+    #print(realpathw(r'C:\Users\jredfox\Desktop\test\dir\Desktop_B\NBTExplorer-2.8.0\..'))
+    #print(realpathw(r'C:\Users\jredfox\Desktop\test\dir-link-c\Desktop_B\..\Documents'))
+    #print(realpathw(r'C:\Users\jredfox\Desktop\test\dir-link-c\Desktop_B\..\Sub2'))
