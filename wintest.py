@@ -47,7 +47,6 @@ else:
 
 def realpathw(path):
     FLAG_VOL_NAME = VOLUME_NAME_GUID if VOLUME_REGEX.match(path) else 0
-    path = os.path.realpath(path)
     hFile = kernel32.CreateFileW(
         unicode(path),
         FILE_READ_EA | FILE_READ_ATTRIBUTES,
