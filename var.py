@@ -5,6 +5,21 @@ import re
 
 isWindows = True
 
+#Use for NT Roots only Example: \\?\Harddisk0Partition3, \\?\GlobalRoot\Device\Mup\localhost\C$
+def existsNTRoot(v):
+    try:
+        e = os.path.exists(v)
+        if not e:
+            os.stat(v)
+        return e
+    except WindowsError as we:
+        if we.winerror == 5:
+            return True
+        return False
+    except:
+        pass
+    return False
+
 #\\?\C:\
 def normpathw(v):
     #Normalize slashes
@@ -23,16 +38,10 @@ def normpathw(v):
     #Correct malformed prefix of \\??\ instead of \??\
     if p.startswith('\\\\??\\'):
        p = p[1:]
+            
     return p
 
-print(normpathw(r'\\??\A'))
-print(normpathw(r'\\\\localhost\\C$\\'))
+print(existsNTRoot(r'\??\Harddisk0Partition4\Recovery\WindowsRE\BLAH'))
+print(os.path.exists(r'\??\Harddisk0Partition4\Recovery\WindowsRE\BLAH'))
+print(normpathw(r'\??\GlobalRoot\Global??\Harddisk0Partition3'))
 
-start = time.time()
-normpathw(r'C:\A\\\\My\\test///////////////////////////////////////////////////////////////////////////////path')
-normpathw(r'C:\A\\\\My\\test///////////////////////////////////////////////////////////////////////////////path')
-normpathw(r'C:\A\\\\My\\test///////////////////////////////////////////////////////////////////////////////path')
-print(time.time() - start)
-
-print(normpathw(r'\\\\\\\\\localhost\\\\\\\C$'))
-print(os.listdir(r'\\?\Volume{300f19ef-1253-495e-90a5-2f04ac7deed0}' + "\\"))
