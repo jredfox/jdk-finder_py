@@ -60,7 +60,7 @@ def realpathw(path):
     if hFile == INVALID_HANDLE_VALUE:
         return path
     try:
-        sizes = [10, 248, 32768]
+        sizes = [248, 32768]
         for i, buf_size in enumerate(sizes):
             buffer = create_unicode_buffer(buf_size)
             ret = kernel32.GetFinalPathNameByHandleW(hFile, buffer, buf_size, FLAG_VOL_NAME)  # 0 = VOLUME_NAME_DOS
