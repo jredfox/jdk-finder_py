@@ -125,6 +125,7 @@ My Optimzied method:
         
 with NoWOW64():
     print(realpathw(r'\\?\Volume{300f19ef-1253-495e-90a5-2f04ac7deed0}' + "\\"))
+    print(realpathw(r'\\127.0.0.1\C$' + "\\"))
     #print(realpathw(r'C:Documents'))
     #print(realpathw(r'C:\Users\jredfox\Desktop\test\dir\Desktop_B\NBTExplorer-2.8.0\..'))
     #print(realpathw(r'C:\Users\jredfox\Desktop\test\dir-link-c\Desktop_B\..\Documents'))

@@ -119,7 +119,7 @@ def findjavas(d):
 def findjavasw(d):
     for root, dirs, files in os.walk(d, followlinks=True):
         # Detect loop or repeated symlink target
-        real = os.path.realpath(root)
+        real = os.path.realpath(root) #TODO: use realpathw instead
         if real in jdirs:
             dirs[:] = []  # Don't recurse further
             continue
