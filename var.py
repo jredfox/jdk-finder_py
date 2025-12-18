@@ -31,7 +31,7 @@ def normpathw(v):
         i = i + 1
         if c == '/':
             c = '\\'
-        if i > 1 and (prev == '\\' and c == '\\'):
+        if i > 1 and prev == '\\' and c == '\\':
             continue
         p = p + c
         prev = c

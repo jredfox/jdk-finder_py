@@ -75,11 +75,12 @@ def realpathw(path):
                 #Preserve Original Path Prefix of \??\ or \\.\
                 q = result[2:3]
                 qp = path[2:3]
-                if result.startswith('\\\\') and (q == '?' or q == '.') and path.startswith('\\\\') and (qp == '?' or qp == '.'):
+                if (result.startswith(r'\??') or (result.startswith('\\\\') and (q == '?' or q == '.'))) and (path.startswith(r'\??') or (path.startswith('\\\\') and (qp == '?' or qp == '.'))):
                     result = path[:4] + result[4:]
                 return result
         return path
-    except Exception:
+    except Exception as e:
+        print(e)
         return path
     finally:
         kernel32.CloseHandle(hFile)
@@ -129,7 +130,7 @@ My Optimzied method:
 """
         
 with NoWOW64():
-    print(realpathw(r'\\.\Volume{300f19ef-1253-495e-90a5-2f04ac7deed0}' + "\\"))
+    print(realpathw(r'\??\Volume{300f19ef-1253-495e-90a5-2f04ac7deed0}' + "\\"))
     print(realpathw(r'\\127.0.0.1\C$' + "\\"))
     #print(realpathw(r'C:Documents'))
     #print(realpathw(r'C:\Users\jredfox\Desktop\test\dir\Desktop_B\NBTExplorer-2.8.0\..'))
