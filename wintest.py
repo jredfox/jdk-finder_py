@@ -25,7 +25,6 @@ if isWindows:
     OPEN_EXISTING = 3
     FILE_FLAG_BACKUP_SEMANTICS = 0x02000000
     VOLUME_NAME_GUID = 0x1
-    #is32bits = sys.maxsize <= 2**32
 
     class NoWOW64:
         _disable = kernel32.Wow64DisableWow64FsRedirection
@@ -45,6 +44,7 @@ else:
         def __exit__(self, type, value, traceback):
             pass
 
+#Assumes the path(slashes, ".", "..") have all been normalized
 def realpathw(path):
     FLAG_VOL_NAME = VOLUME_NAME_GUID if VOLUME_REGEX.match(path) else 0
     hFile = kernel32.CreateFileW(
@@ -72,7 +72,7 @@ def realpathw(path):
                     colon = result.find(':')
                     if colon > 0:
                         return result[(colon - 1):]
-                #Preserve Original Path Prefix of \??\ or \\.\
+                #Preserve Original Path Prefix of \??\ or \\.\ or \\?\
                 q = result[2:3]
                 qp = path[2:3]
                 if ((result.startswith('\\\\') and (q == '?' or q == '.')) or result.startswith(r'\??')) and ((path.startswith('\\\\') and (qp == '?' or qp == '.')) or path.startswith(r'\??')):
