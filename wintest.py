@@ -79,8 +79,7 @@ def realpathw(path):
                     result = path[:4] + result[4:]
                 return result
         return path
-    except Exception as e:
-        print(e)
+    except Exception:
         return path
     finally:
         kernel32.CloseHandle(hFile)
