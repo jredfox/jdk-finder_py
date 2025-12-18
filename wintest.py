@@ -75,7 +75,7 @@ def realpathw(path):
                 #Preserve Original Path Prefix of \??\ or \\.\ or \\?\
                 q = result[2:3]
                 qp = path[2:3]
-                if ((result.startswith('\\\\') and (q == '?' or q == '.')) or result.startswith(r'\??')) and ((path.startswith('\\\\') and (qp == '?' or qp == '.')) or path.startswith(r'\??')):
+                if ((path.startswith('\\\\') and (qp == '?' or qp == '.')) or path.startswith(r'\??')) and ((result.startswith('\\\\') and (q == '?' or q == '.')) or result.startswith(r'\??')):
                     result = path[:4] + result[4:]
                 return result
         return path
