@@ -72,6 +72,11 @@ def realpathw(path):
                     colon = result.find(':')
                     if colon > 0:
                         return result[(colon - 1):]
+                #Preserve Original Path Prefix of \??\ or \\.\
+                q = result[2:3]
+                qp = path[2:3]
+                if result.startswith('\\\\') and (q == '?' or q == '.') and path.startswith('\\\\') and (qp == '?' or qp == '.'):
+                    result = path[:4] + result[4:]
                 return result
         return path
     except Exception:
