@@ -131,6 +131,7 @@ def findjavasw(d):
 #Find javas but optimized for unix (linux & macOS) Safer against symlinks
 #Found from this answer https://stackoverflow.com/a/36977656
 def findjavasu(d):
+    d = os.path.realpath(d)
     for dirpath, dirnames, filenames in os.walk(d, followlinks=True):
         st = os.stat(dirpath)
         scandirs = []
