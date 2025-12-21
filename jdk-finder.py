@@ -95,11 +95,11 @@ def find_jdks_recurse():
     elif isMac:
         print('TODO:')#//TODO:
     else:
-        findjavas('/usr/lib/jvm')
-        findjavas('/usr/java')
+        findjavas('/usr/lib/jvm') #TODO: make it jvm* secondary
         for p in os.listdir('/usr'):
             if p.lower().startswith('lib'):
                 findjavas(os.path.join('/usr', p))
+        findjavas('/usr/java')
         findjavas('/etc/alternatives')
         findjavas('/opt')
         findjavas('/usr/local')
