@@ -58,6 +58,6 @@ versions = [
 
 start = time.time()
 for v in versions:
-    get_ver(v)
+    print(get_ver(v))
 print(time.time() - start)
 
